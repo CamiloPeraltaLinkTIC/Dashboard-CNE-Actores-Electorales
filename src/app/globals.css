@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+/* ======================================================================
+   DESIGN SYSTEM — Glassmorphism + Neón oscuro
+   El acento (--accent / --glow) lo sobreescribe el vertical activo.
+   ====================================================================== */
+
+:root {
+  --bg: #070b16;
+  --bg-2: #0b1120;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.06);
+  --surface-border: rgba(255, 255, 255, 0.09);
+  --surface-border-strong: rgba(255, 255, 255, 0.16);
+  --blur: 18px;
+
+  --text: #e8edf7;
+  --text-dim: #8a93a8;
+  --text-faint: #5b647a;
+
+  /* Acento por defecto (CNE — cian). El layout lo cambia por vertical. */
+  --accent: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.14);
+  --glow: 34, 211, 238;
+
+  --radius: 16px;
+}
+
+[data-vertical="cne"] {
+  --accent: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.14);
+  --glow: 34, 211, 238;
+}
+
+[data-vertical="ae"] {
+  --accent: #e879f9;
+  --accent-soft: rgba(232, 121, 249, 0.14);
+  --glow: 232, 121, 249;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-text: var(--text);
+  --color-text-dim: var(--text-dim);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  color: var(--text);
+  background: var(--bg);
+  /* Fondo "centro de mando": malla sutil + halos del acento */
+  background-image:
+    radial-gradient(900px circle at 12% -10%, rgba(var(--glow), 0.16), transparent 45%),
+    radial-gradient(800px circle at 100% 0%, rgba(var(--glow), 0.10), transparent 40%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  transition: background-image 600ms ease;
+}
+
+/* ---- Utilidades de superficie de vidrio ---- */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border-radius: var(--radius);
+}
+
+.glass-strong {
+  background: var(--surface-2);
+  border: 1px solid var(--surface-border-strong);
+  backdrop-filter: blur(calc(var(--blur) + 6px));
+  -webkit-backdrop-filter: blur(calc(var(--blur) + 6px));
+  border-radius: var(--radius);
+}
+
+.neon-border {
+  border: 1px solid rgba(var(--glow), 0.45);
+  box-shadow:
+    0 0 0 1px rgba(var(--glow), 0.15),
+    0 0 24px -6px rgba(var(--glow), 0.55);
+}
+
+.neon-text {
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(var(--glow), 0.55);
+}
+
+.neon-glow {
+  box-shadow: 0 0 28px -8px rgba(var(--glow), 0.7);
+}
+
+.accent-bg {
+  background: var(--accent);
+}
+
+/* ---- Scrollbar futurista ---- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--glow), 0.25);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--glow), 0.45);
+  background-clip: content-box;
+}
+
+/* ---- Animaciones ---- */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-pulse-glow { animation: pulseGlow 2.4s ease-in-out infinite; }
+.animate-floaty { animation: floaty 6s ease-in-out infinite; }
+
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(var(--glow), 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--glow), 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
