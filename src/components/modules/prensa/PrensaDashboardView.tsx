@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getDb } from "@/lib/supabase";
 import {
   Calendar as CalendarIcon,
@@ -24,6 +24,7 @@ const supabase = getDb("estrategia");
 /* ====================== Vista Diaria ====================== */
 function DailyView() {
   const { userRole } = useLayout();
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const [selectedDate, setSelectedDate] = useState(format(subDays(new Date(), 1), "yyyy-MM-dd"));
   const [showForm, setShowForm] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -81,8 +82,12 @@ function DailyView() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
-            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-dim)]" />
+            <CalendarIcon
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-dim)] cursor-pointer hover:text-[var(--accent)] transition-colors z-10"
+              onClick={() => dateInputRef.current?.showPicker()}
+            />
             <input
+              ref={dateInputRef}
               type="date"
               value={selectedDate}
               max={format(subDays(new Date(), 1), "yyyy-MM-dd")}

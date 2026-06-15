@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { format } from "date-fns";
 import { getDb } from "@/lib/supabase";
 import { KPICard } from "./RrssKpiCard";
@@ -178,6 +178,7 @@ export function ListeningDashboardView({ categoria, title, isMonthly = false }: 
   const { userRole } = useLayout();
   const [data, setData] = useState<ListeningMetrics[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   const getTodayString = () => {
     return isMonthly ? format(new Date(), 'yyyy-MM-01') : format(new Date(), 'yyyy-MM-dd');
@@ -222,8 +223,12 @@ export function ListeningDashboardView({ categoria, title, isMonthly = false }: 
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 glass px-3 py-2">
-            <Calendar className="w-4 h-4 text-[var(--text-dim)]" />
+            <Calendar
+              className="w-4 h-4 text-[var(--text-dim)] cursor-pointer hover:text-[var(--accent)] transition-colors"
+              onClick={() => dateInputRef.current?.showPicker()}
+            />
             <input
+              ref={dateInputRef}
               type={isMonthly ? "month" : "date"}
               value={isMonthly ? selectedDate.substring(0, 7) : selectedDate}
               max={isMonthly ? format(new Date(), 'yyyy-MM') : getTodayString()}
