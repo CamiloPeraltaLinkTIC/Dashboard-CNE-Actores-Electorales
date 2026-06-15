@@ -14,6 +14,7 @@ import { PagesChart } from "@/components/modules/analytics/PagesChart";
 import { GeoMap } from "@/components/modules/analytics/GeoMap";
 import { DashboardControls } from "@/components/modules/analytics/DashboardControls";
 import { DbStatus } from "@/components/ui/DbStatus";
+import { TabBar } from "@/components/ui/TabBar";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
@@ -695,24 +696,7 @@ export function AnalyticsDashboardView() {
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="glass flex flex-wrap gap-1 rounded-2xl p-1">
-          {tabs.map((t) => {
-            const isActive = t.key === active;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setActive(t.key)}
-                className={cn(
-                  "rounded-xl px-4 py-2 text-sm font-bold transition-all",
-                  isActive ? "text-[var(--text)] neon-border" : "text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-white/5"
-                )}
-                style={isActive ? { background: "var(--accent-soft)" } : undefined}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
+        <TabBar tabs={tabs} active={active} onChange={setActive} groupId="analytics" />
         <DbStatus db="analytics" table="manual_metrics" />
       </div>
 

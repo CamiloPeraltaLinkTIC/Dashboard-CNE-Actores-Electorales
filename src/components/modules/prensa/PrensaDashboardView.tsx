@@ -16,7 +16,7 @@ import { MonitoringHistoricalChart, MonitoringMonthlyTrendChart, SentimentFigure
 import { GeoMap } from "./GeoMap";
 import { KPICard } from "./KPICard";
 import { DbStatus } from "@/components/ui/DbStatus";
-import { cn } from "@/lib/utils";
+import { TabBar } from "@/components/ui/TabBar";
 import { useLayout } from "@/context/LayoutContext";
 
 const supabase = getDb("estrategia");
@@ -388,26 +388,7 @@ export function PrensaDashboardView() {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="glass flex flex-wrap gap-1 rounded-2xl p-1">
-          {TABS.map((t) => {
-            const isActive = t.key === active;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setActive(t.key)}
-                className={cn(
-                  "rounded-xl px-4 py-2 text-sm font-bold transition-all",
-                  isActive
-                    ? "text-[var(--text)] neon-border"
-                    : "text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-white/5"
-                )}
-                style={isActive ? { background: "var(--accent-soft)" } : undefined}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
+        <TabBar tabs={TABS} active={active} onChange={setActive} groupId="prensa" />
         <DbStatus db="estrategia" />
       </div>
 

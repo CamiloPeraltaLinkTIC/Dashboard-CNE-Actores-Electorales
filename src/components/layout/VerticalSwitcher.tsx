@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, Check } from "lucide-react";
 import { VERTICALS, VERTICAL_IDS, type VerticalId } from "@/lib/verticals";
 import { useVertical } from "@/context/VerticalContext";
+import { useToast } from "@/context/ToastContext";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
  */
 export function VerticalSwitcher() {
   const { vertical, config, switchVertical, isSwitching } = useVertical();
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -32,7 +34,10 @@ export function VerticalSwitcher() {
 
   const handlePick = (id: VerticalId) => {
     setOpen(false);
-    switchVertical(id, currentSlug);
+    if (id !== vertical) {
+      switchVertical(id, currentSlug);
+      toast({ kind: "info", title: `Vertical: ${VERTICALS[id].shortLabel}`, description: VERTICALS[id].label });
+    }
   };
 
   return (
@@ -69,7 +74,8 @@ export function VerticalSwitcher() {
 
       {open && (
         <div
-          className="glass-strong neon-border absolute left-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-2xl p-1.5 shadow-2xl"
+          className="neon-border absolute left-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-2xl border border-white/10 p-1.5 shadow-2xl"
+          style={{ background: "#0b1120" }}
           role="listbox"
         >
           {VERTICAL_IDS.map((id) => {

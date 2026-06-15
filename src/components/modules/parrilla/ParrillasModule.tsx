@@ -5,7 +5,7 @@ import { ParrillaView } from "./ParrillaView";
 import { ParrillaGenericaView } from "../parrilla-generica/ParrillaGenericaView";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DbStatus } from "@/components/ui/DbStatus";
-import { cn } from "@/lib/utils";
+import { TabBar } from "@/components/ui/TabBar";
 import type { VerticalId } from "@/lib/verticals";
 
 interface Tab {
@@ -79,26 +79,13 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
 
   return (
     <div>
-      <div className="mb-6 glass flex w-fit flex-wrap gap-1 rounded-2xl p-1">
-        {tabs.map((t) => {
-          const isActive = t.key === active;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setActive(t.key)}
-              className={cn(
-                "rounded-xl px-4 py-2 text-sm font-bold transition-all",
-                isActive
-                  ? "text-[var(--text)] neon-border"
-                  : "text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-white/5"
-              )}
-              style={isActive ? { background: "var(--accent-soft)" } : undefined}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
+      <TabBar
+        tabs={tabs}
+        active={active}
+        onChange={setActive}
+        groupId={`parrillas-${vertical}`}
+        className="mb-6"
+      />
       <div key={current.key}>{current.node}</div>
     </div>
   );

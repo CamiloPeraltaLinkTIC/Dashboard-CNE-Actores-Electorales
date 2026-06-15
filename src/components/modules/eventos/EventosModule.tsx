@@ -5,7 +5,7 @@ import { EstrategiaDashboardView } from "@/components/modules/rrss/EstrategiaDas
 import { ListeningDashboardView } from "@/components/modules/rrss/ListeningDashboardView";
 import { ContentManagerView } from "./ContentManagerView";
 import { DbStatus } from "@/components/ui/DbStatus";
-import { cn } from "@/lib/utils";
+import { TabBar } from "@/components/ui/TabBar";
 
 interface SubTab {
   key: string;
@@ -166,50 +166,24 @@ export function EventosModule() {
     <div>
       {/* Cabecera: secciones + estado de conexión */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="glass flex flex-wrap gap-1 rounded-2xl p-1">
-          {sections.map((s) => {
-            const isActive = s.key === activeSection;
-            return (
-              <button
-                key={s.key}
-                onClick={() => handleSection(s.key)}
-                className={cn(
-                  "rounded-xl px-4 py-2 text-sm font-bold transition-all",
-                  isActive
-                    ? "text-[var(--text)] neon-border"
-                    : "text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-white/5"
-                )}
-                style={isActive ? { background: "var(--accent-soft)" } : undefined}
-              >
-                {s.label}
-              </button>
-            );
-          })}
-        </div>
+        <TabBar
+          tabs={sections}
+          active={activeSection}
+          onChange={handleSection}
+          groupId="eventos-sections"
+        />
         <DbStatus db="estrategia" />
       </div>
 
       {/* Sub-pestañas de la sección activa */}
       {currentSection.subTabs.length > 1 && (
-        <div className="mb-6 flex flex-wrap gap-1">
-          {currentSection.subTabs.map((t) => {
-            const isActive = t.key === activeSub;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setActiveSub(t.key)}
-                className={cn(
-                  "rounded-xl px-4 py-2 text-sm font-bold transition-all",
-                  isActive
-                    ? "accent-bg text-black neon-glow"
-                    : "glass text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-white/5"
-                )}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
+        <TabBar
+          tabs={currentSection.subTabs}
+          active={activeSub}
+          onChange={setActiveSub}
+          groupId="eventos-sub"
+          className="mb-6"
+        />
       )}
 
       {currentSub.node}

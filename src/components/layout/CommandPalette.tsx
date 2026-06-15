@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, CornerDownLeft } from "lucide-react";
 import { VERTICALS, VERTICAL_IDS, SHARED_MODULES } from "@/lib/verticals";
 import { useVertical } from "@/context/VerticalContext";
+import { usePresentation } from "@/context/PresentationContext";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
@@ -12,12 +13,14 @@ interface Entry {
   label: string;
   sub: string;
   icon: string;
-  path: string;
+  path?: string;
+  action?: () => void;
 }
 
 export function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
   const { switchVertical } = useVertical();
+  const { toggle: togglePresentation } = usePresentation();
   const [q, setQ] = useState("");
   const [active, setActive] = useState(0);
 
@@ -33,8 +36,14 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
     for (const m of SHARED_MODULES) {
       list.push({ label: m.title, sub: `Transversal · ${m.description}`, icon: m.icon, path: m.path });
     }
+    list.push({
+      label: "Modo presentación",
+      sub: "Acción · rota módulos en pantalla completa",
+      icon: "LayoutDashboard",
+      action: togglePresentation,
+    });
     return list;
-  }, []);
+  }, [togglePresentation]);
 
   const filtered = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -51,6 +60,11 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
 
   const go = (e: Entry) => {
     onClose();
+    if (e.action) {
+      e.action();
+      return;
+    }
+    if (!e.path) return;
     const m = e.path.match(/^\/(cne|ae)/);
     if (m) switchVertical(m[1] as "cne" | "ae");
     router.push(e.path);
@@ -93,7 +107,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
           )}
           {filtered.map((e, i) => (
             <button
-              key={e.path + e.label}
+              key={(e.path ?? "action") + e.label}
               onMouseEnter={() => setActive(i)}
               onClick={() => go(e)}
               className={cn(

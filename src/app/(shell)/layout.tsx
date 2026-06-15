@@ -1,6 +1,8 @@
 import { cookies, headers } from "next/headers";
 import { LayoutProvider } from "@/context/LayoutContext";
 import { VerticalProvider } from "@/context/VerticalContext";
+import { ToastProvider } from "@/context/ToastContext";
+import { PresentationProvider } from "@/context/PresentationContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { isVerticalId, DEFAULT_VERTICAL } from "@/lib/verticals";
 
@@ -15,7 +17,11 @@ export default async function ShellLayout({ children }: { children: React.ReactN
   return (
     <LayoutProvider initialRole={role}>
       <VerticalProvider initialVertical={vertical}>
-        <DashboardLayout>{children}</DashboardLayout>
+        <ToastProvider>
+          <PresentationProvider>
+            <DashboardLayout>{children}</DashboardLayout>
+          </PresentationProvider>
+        </ToastProvider>
       </VerticalProvider>
     </LayoutProvider>
   );

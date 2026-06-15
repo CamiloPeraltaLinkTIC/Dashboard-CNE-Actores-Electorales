@@ -3,6 +3,7 @@
 import React from "react";
 import { ArrowUpRight, ArrowDownRight, Users, Activity, MousePointerClick, Clock, UserPlus, Eye, Contact } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 
 interface KPICardProps {
   title: string;
@@ -49,7 +50,12 @@ export function KPICard({ title, value, change, trend, id, prevText }: KPICardPr
       <div>
         <h3 className="text-[var(--text-dim)] text-sm font-semibold mb-1">{title}</h3>
         <p className="text-3xl flex items-baseline gap-2 font-black text-[var(--text)] tracking-tight">
-          {value}
+          <AnimatedNumber
+            value={value}
+            format={(n) =>
+              `${n.toLocaleString("es-CO", { maximumFractionDigits: 2 })}${/%$/.test(value) ? "%" : ""}`
+            }
+          />
         </p>
         {prevText && (
           <p className="text-xs text-[var(--text-faint)] mt-2 font-medium">{prevText}</p>

@@ -2,15 +2,18 @@
 
 import React, { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Maximize2, Minimize2, LogOut, Menu, X, Command } from "lucide-react";
+import { Maximize2, Minimize2, LogOut, Menu, X, Command, MonitorPlay } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import { useVertical } from "@/context/VerticalContext";
+import { usePresentation } from "@/context/PresentationContext";
 import { VerticalSwitcher } from "./VerticalSwitcher";
+import { LiveClock } from "./LiveClock";
 import { cn } from "@/lib/utils";
 
 export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
   const { isFullscreen, toggleFullscreen, userRole, isSidebarOpen, setSidebarOpen } = useLayout();
   const { config } = useVertical();
+  const { isPresenting, toggle: togglePresentation } = usePresentation();
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
@@ -40,6 +43,16 @@ export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
               Centro de Mando
             </p>
           </div>
+
+          {/* by LinkTIC */}
+          <div className="ml-2 flex items-center gap-1.5 border-l border-white/10 pl-3">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-faint)]">
+              by
+            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/linktic-logo.svg" alt="LinkTIC" className="h-7 w-auto" />
+            <span className="text-sm font-bold text-[var(--text)]">LinkTIC</span>
+          </div>
         </div>
 
         <div className="mx-1 hidden h-8 w-px bg-white/10 md:block" />
@@ -49,6 +62,8 @@ export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
       </div>
 
       <div className="flex items-center gap-2">
+        <LiveClock />
+
         <button
           onClick={onOpenCommand}
           className="hidden items-center gap-2 rounded-xl glass px-3 py-2 text-xs font-semibold text-[var(--text-dim)] transition-colors hover:neon-border md:flex"
@@ -65,6 +80,20 @@ export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
         >
           {userRole === "viewer" ? "Modo lectura" : "Modo admin"}
         </div>
+
+        <button
+          onClick={togglePresentation}
+          className={cn(
+            "rounded-xl p-2 transition-all",
+            isPresenting
+              ? "neon-border text-[var(--accent)]"
+              : "text-[var(--text-dim)] hover:bg-white/5 hover:text-[var(--accent)]"
+          )}
+          style={isPresenting ? { background: "var(--accent-soft)" } : undefined}
+          title="Modo presentación (rota módulos en pantalla completa)"
+        >
+          <MonitorPlay className="h-5 w-5" />
+        </button>
 
         <button
           onClick={toggleFullscreen}

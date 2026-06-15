@@ -69,6 +69,47 @@ body {
   transition: background-image 600ms ease;
 }
 
+/* ---- Morph suave del acento neón al cambiar de vertical (CNE <-> AE) ---- */
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #22d3ee;
+}
+@property --accent-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(34, 211, 238, 0.14);
+}
+html {
+  transition: --accent 650ms ease, --accent-soft 650ms ease;
+}
+
+/* ---- Aurora animada de fondo (capa "centro de mando") ---- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 38% at 18% 22%, rgba(var(--glow), 0.20), transparent 70%),
+    radial-gradient(34% 34% at 82% 28%, rgba(var(--glow), 0.13), transparent 70%),
+    radial-gradient(44% 44% at 62% 82%, rgba(var(--glow), 0.11), transparent 70%);
+  filter: blur(48px);
+  animation: auroraMove 20s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate3d(2.5%, -3%, 0) rotate(5deg) scale(1.1); }
+  100% { transform: translate3d(-2.5%, 2.5%, 0) rotate(-4deg) scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+  html { transition: none; }
+}
+
 /* ---- Utilidades de superficie de vidrio ---- */
 .glass {
   background: var(--surface);
@@ -146,4 +187,29 @@ body {
     linear-gradient(rgba(var(--glow), 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(var(--glow), 0.05) 1px, transparent 1px);
   background-size: 44px 44px;
+}
+
+/* ---- Skeleton con shimmer de vidrio ---- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--glow), 0.12),
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
 }

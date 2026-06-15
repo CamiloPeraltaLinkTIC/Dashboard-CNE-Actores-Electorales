@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { LucideIcon, ArrowUp, ArrowDown } from "lucide-react";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 
 interface KPICardProps {
   title: string;
@@ -36,7 +39,9 @@ export function KPICard({
 
       <div className="flex items-baseline gap-2">
         <span className="text-3xl font-black tracking-tight text-[var(--text)]">
-          {valuePrefix}{value.toLocaleString()}{valueSuffix}
+          {valuePrefix}
+          <AnimatedNumber value={value} format={(n) => n.toLocaleString("es-CO")} />
+          {valueSuffix}
         </span>
         {trend !== undefined && trend !== 0 && (
           <span className={cn(

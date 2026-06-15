@@ -16,8 +16,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const vertical = cookieStore.get("vertical")?.value === "ae" ? "ae" : "cne";
 
   return (
-    <html lang="es" data-vertical={vertical} className={inter.variable}>
-      <body className={inter.className}>{children}</body>
+    <html lang="es" data-vertical={vertical} className={inter.variable} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
