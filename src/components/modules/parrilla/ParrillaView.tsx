@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getDb } from "@/lib/supabase";
 import { DbStatus } from "@/components/ui/DbStatus";
+import { useLayout } from "@/context/LayoutContext";
 
 const supabase = getDb("analytics");
 
@@ -110,8 +111,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   const storageKey = `${table}_list`;
 
   const [isMounted, setIsMounted] = useState(false);
-  // El shell unificado gestiona auth; el rol editor está siempre habilitado aquí.
-  const [role] = useState<"editor" | "viewer">("editor");
+  const { userRole: role } = useLayout();
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [contentList, setContentList] = useState<ContentItem[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -306,7 +306,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   }, [table]);
 
   useEffect(() => {
-    if (!draggingId || role !== "editor") return;
+    if (!draggingId || role !== "admin") return;
 
     const onMouseMove = (e: MouseEvent) => {
       setHasMoved(true);
@@ -372,7 +372,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   }, [draggingId, dragStartY, dragStartTime, contentList, role]);
 
   const handleOpenAddModal = (time: string, platform: PlatformId) => {
-    if (role !== "editor") return;
+    if (role !== "admin") return;
     setFormId("");
     const [h, m] = time.split(":");
     setFormHour(h || "07");
@@ -389,7 +389,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   };
 
   const handleOpenEditModal = (item: ContentItem) => {
-    if (role !== "editor") return;
+    if (role !== "admin") return;
     setFormId(item.id);
     const [h, m] = item.time.split(":");
     setFormHour(h || "07");
@@ -406,7 +406,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   };
 
   const handleDragStart = (e: React.MouseEvent, item: ContentItem) => {
-    if (role !== "editor") return;
+    if (role !== "admin") return;
     if (e.button !== 0) return;
     if ((e.target as HTMLElement).closest("button")) return;
 
@@ -417,7 +417,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   };
 
   const handleDeleteItem = async () => {
-    if (role !== "editor" || !itemToDelete) return;
+    if (role !== "admin" || !itemToDelete) return;
 
     setIsSaving(true);
     setIsModalOpen(false);
@@ -628,28 +628,26 @@ export function ParrillaView({ table, title }: { table: string; title: string })
       </div>
 
       {/* Banner informativo */}
-      <div className="glass flex items-center gap-3 rounded-xl px-5 py-3.5 text-sm text-[var(--text-dim)]">
-        <svg
-          width="20"
-          height="20"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          className="shrink-0 text-[var(--accent)]"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708.286a.75.75 0 01-1.063-.852l.708-.286zm0 0L10.5 12.75M12 20.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5z"
-          />
-        </svg>
-        <span>
-          <strong className="text-[var(--text)]">Modo Editor Activo:</strong> Puedes
-          hacer clic sobre cualquier celda vacía para programar contenido, o
-          editar/eliminar las publicaciones existentes de la grilla.
-        </span>
-      </div>
+      {role === "admin" ? (
+        <div className="glass flex items-center gap-3 rounded-xl px-5 py-3.5 text-sm text-[var(--text-dim)]">
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="shrink-0 text-[var(--accent)]">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708.286a.75.75 0 01-1.063-.852l.708-.286zm0 0L10.5 12.75M12 20.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5z" />
+          </svg>
+          <span>
+            <strong className="text-[var(--text)]">Modo Editor Activo:</strong> Puedes hacer clic sobre cualquier celda vacía para programar contenido, o editar/eliminar las publicaciones existentes de la grilla.
+          </span>
+        </div>
+      ) : (
+        <div className="glass flex items-center gap-3 rounded-xl px-5 py-3.5 text-sm text-[var(--text-dim)]">
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="shrink-0 text-[var(--accent)]">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.43 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>
+            <strong className="text-[var(--text)]">Modo de Solo Lectura:</strong> Tienes acceso a visualizar toda la planificación, pero no puedes añadir ni modificar publicaciones.
+          </span>
+        </div>
+      )}
 
       {/* Grilla de la parrilla */}
       <div className="glass max-h-[calc(100vh-220px)] overflow-auto rounded-2xl">
@@ -763,7 +761,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
                         isActive ? "bg-amber-500/5" : ""
                       }`}
                       onClick={() =>
-                        role === "editor" && handleOpenAddModal(hour, plat.id)
+                        role === "admin" && handleOpenAddModal(hour, plat.id)
                       }
                     >
                       {isActive && (
@@ -773,7 +771,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
                         />
                       )}
 
-                      {role === "editor" && (
+                      {role === "admin" && (
                         <button
                           className="absolute right-1.5 top-1.5 z-40 flex h-5 w-5 items-center justify-center rounded-full accent-bg text-sm font-bold text-black opacity-0 transition group-hover:opacity-100 hover:neon-glow"
                           onClick={(e) => {
@@ -797,7 +795,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
                           <div
                             key={cellItem.id}
                             className={`glass absolute flex flex-col justify-between gap-2 overflow-hidden rounded-xl transition-all hover:-translate-y-0.5 hover:neon-border ${
-                              role === "editor" ? "cursor-grab" : ""
+                              role === "admin" ? "cursor-grab" : ""
                             } ${draggingId === cellItem.id ? "cursor-grabbing opacity-90" : ""}`}
                             style={{
                               top: `${topPercent}%`,
@@ -814,7 +812,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
                               e.stopPropagation();
                               if (hasMoved) return;
 
-                              if (role === "editor") {
+                              if (role === "admin") {
                                 handleOpenEditModal(cellItem);
                               } else {
                                 setViewItem(cellItem);
@@ -870,7 +868,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
                               )}
                             </p>
 
-                            {role === "editor" && (
+                            {role === "admin" && (
                               <div className="mt-1 flex justify-end gap-2 border-t border-white/10 pt-2">
                                 <button
                                   className="flex items-center justify-center rounded-md p-1 text-[var(--text-dim)] transition hover:bg-white/10 hover:text-[var(--accent)]"
@@ -903,7 +901,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
                       })}
 
                       {/* Placeholder de celda vacía */}
-                      {role === "editor" && (
+                      {role === "admin" && (
                         <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] flex h-[calc(100%-24px)] w-[calc(100%-24px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 text-[var(--accent)] opacity-0 transition group-hover:opacity-100">
                           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent-soft)] text-base font-bold">
                             +
