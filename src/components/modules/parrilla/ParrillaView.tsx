@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getDb } from "@/lib/supabase";
 import { DbStatus } from "@/components/ui/DbStatus";
 import { useLayout } from "@/context/LayoutContext";
+import { ParrillaExcelImport } from "./ParrillaExcelImport";
 
 const supabase = getDb("analytics");
 
@@ -624,7 +625,21 @@ export function ParrillaView({ table, title }: { table: string; title: string })
             Parrilla de contenidos · planificación por hora y plataforma
           </p>
         </div>
-        <DbStatus db="analytics" table={table} />
+        <div className="flex items-center gap-3">
+          {role === "admin" && (
+            <ParrillaExcelImport
+              table={table}
+              onImported={(items) => {
+                setContentList((prev) => {
+                  const updated = [...prev, ...items];
+                  localStorage.setItem(storageKey, JSON.stringify(updated));
+                  return updated;
+                });
+              }}
+            />
+          )}
+          <DbStatus db="analytics" table={table} />
+        </div>
       </div>
 
       {/* Banner informativo */}
