@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import {
   Calendar as CalendarIcon,
   Plus,
@@ -17,6 +17,7 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ selectedDate, onDateChange, onShowForm, onShowHistory, hasDataForSelectedDate, isAdmin }: DashboardHeaderProps) {
+  const dateRef = useRef<HTMLInputElement>(null);
   return (
     <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
       <div className="flex flex-col gap-1">
@@ -29,12 +30,16 @@ export function DashboardHeader({ selectedDate, onDateChange, onShowForm, onShow
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="glass flex items-center gap-2 px-3 py-2">
-          <CalendarIcon className="w-4 h-4 text-[var(--text-dim)]" />
+          <CalendarIcon
+            className="w-4 h-4 text-[var(--text-dim)] cursor-pointer hover:text-[var(--accent)] transition-colors"
+            onClick={() => dateRef.current?.showPicker()}
+          />
           <input
+            ref={dateRef}
             type="date"
             value={selectedDate}
             onChange={(e) => onDateChange(e.target.value)}
-            className="text-sm border-none bg-transparent text-[var(--text)] placeholder:text-[var(--text-faint)] focus:neon-border focus:outline-none focus:ring-0 font-bold"
+            className="text-sm border-none bg-transparent text-[var(--text)] placeholder:text-[var(--text-faint)] focus:neon-border focus:outline-none focus:ring-0 font-bold [color-scheme:dark]"
           />
         </div>
 

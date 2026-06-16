@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { format, subDays } from 'date-fns';
+import { Calendar } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 interface ControlsProps {
@@ -16,6 +17,8 @@ function DashboardControlsInner({ onFilterChange, isLoading }: ControlsProps) {
 
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+  const startRef = useRef<HTMLInputElement>(null);
+  const endRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const urlStart = searchParams.get('startDate');
@@ -54,25 +57,39 @@ function DashboardControlsInner({ onFilterChange, isLoading }: ControlsProps) {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
           <label className="text-xs font-bold text-[var(--text-dim)] whitespace-nowrap">Desde:</label>
-          <input
-            type="date"
-            value={startDate}
-            max={endDate || undefined}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="glass rounded-xl px-2 py-1.5 text-sm font-medium text-[var(--text)] placeholder:text-[var(--text-faint)] focus:neon-border focus:outline-none transition-all [color-scheme:dark]"
-          />
+          <div className="glass flex items-center gap-2 rounded-xl px-2 py-1.5 focus-within:neon-border transition-all">
+            <Calendar
+              className="w-4 h-4 text-[var(--text-dim)] cursor-pointer hover:text-[var(--accent)] transition-colors"
+              onClick={() => startRef.current?.showPicker()}
+            />
+            <input
+              ref={startRef}
+              type="date"
+              value={startDate}
+              max={endDate || undefined}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-transparent text-sm font-medium text-[var(--text)] focus:outline-none [color-scheme:dark]"
+            />
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
           <label className="text-xs font-bold text-[var(--text-dim)] whitespace-nowrap">Hasta:</label>
-          <input
-            type="date"
-            value={endDate}
-            min={startDate || undefined}
-            max={format(new Date(), 'yyyy-MM-dd')}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="glass rounded-xl px-2 py-1.5 text-sm font-medium text-[var(--text)] placeholder:text-[var(--text-faint)] focus:neon-border focus:outline-none transition-all [color-scheme:dark]"
-          />
+          <div className="glass flex items-center gap-2 rounded-xl px-2 py-1.5 focus-within:neon-border transition-all">
+            <Calendar
+              className="w-4 h-4 text-[var(--text-dim)] cursor-pointer hover:text-[var(--accent)] transition-colors"
+              onClick={() => endRef.current?.showPicker()}
+            />
+            <input
+              ref={endRef}
+              type="date"
+              value={endDate}
+              min={startDate || undefined}
+              max={format(new Date(), 'yyyy-MM-dd')}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-transparent text-sm font-medium text-[var(--text)] focus:outline-none [color-scheme:dark]"
+            />
+          </div>
         </div>
 
         <button

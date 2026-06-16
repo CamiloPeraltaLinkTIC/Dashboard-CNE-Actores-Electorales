@@ -92,7 +92,7 @@ function DailyView() {
               value={selectedDate}
               max={format(subDays(new Date(), 1), "yyyy-MM-dd")}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="pl-10 pr-4 py-2.5 glass text-sm font-bold text-[var(--text)] focus:neon-border focus:outline-none transition-all"
+              className="pl-10 pr-4 py-2.5 glass text-sm font-bold text-[var(--text)] focus:neon-border focus:outline-none transition-all [color-scheme:dark]"
             />
           </div>
           {userRole === 'admin' && (
@@ -199,6 +199,7 @@ function DailyView() {
 
 /* ====================== Vista Mensual ====================== */
 function MonthlyView() {
+  const monthInputRef = useRef<HTMLInputElement>(null);
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), "yyyy-MM"));
   const [loading, setLoading] = useState(true);
   const [aggregatedData, setAggregatedData] = useState<any>(null);
@@ -292,12 +293,16 @@ function MonthlyView() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
-            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-dim)]" />
+            <CalendarIcon
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-dim)] cursor-pointer hover:text-[var(--accent)] transition-colors"
+              onClick={() => monthInputRef.current?.showPicker()}
+            />
             <input
+              ref={monthInputRef}
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="pl-10 pr-4 py-2.5 glass text-sm font-bold text-[var(--text)] focus:neon-border focus:outline-none transition-all"
+              className="pl-10 pr-4 py-2.5 glass text-sm font-bold text-[var(--text)] focus:neon-border focus:outline-none transition-all [color-scheme:dark]"
             />
           </div>
         </div>
