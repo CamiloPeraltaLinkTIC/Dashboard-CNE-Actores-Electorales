@@ -1,26 +1,23 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { Maximize2, Minimize2, LogOut, Menu, X, Command, MonitorPlay } from "lucide-react";
 import { useLayout } from "@/context/LayoutContext";
 import { useVertical } from "@/context/VerticalContext";
 import { usePresentation } from "@/context/PresentationContext";
+import { signOut } from "@/app/actions/auth";
 import { VerticalSwitcher } from "./VerticalSwitcher";
 import { LiveClock } from "./LiveClock";
 import { cn } from "@/lib/utils";
 
 export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
-  const { isFullscreen, toggleFullscreen, userRole, isSidebarOpen, setSidebarOpen } = useLayout();
+  const { isFullscreen, toggleFullscreen, role, isSidebarOpen, setSidebarOpen } = useLayout();
   const { config } = useVertical();
   const { isPresenting, toggle: togglePresentation } = usePresentation();
-  const router = useRouter();
 
-  const handleLogout = useCallback(async () => {
-    await fetch("/api/auth/login", { method: "DELETE" });
-    router.push("/login");
-    router.refresh();
-  }, [router]);
+  const handleLogout = useCallback(() => {
+    void signOut();
+  }, []);
 
   return (
     <header className="glass sticky top-0 z-40 flex h-16 w-full flex-shrink-0 items-center justify-between border-x-0 border-t-0 rounded-none px-4 md:px-6">
@@ -78,7 +75,7 @@ export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
           className="hidden rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-tight md:block"
           style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
         >
-          {userRole === "viewer" ? "Modo lectura" : "Modo admin"}
+          {role === "superadmin" ? "Superadmin" : role === "admin" ? "Modo admin" : "Modo lectura"}
         </div>
 
         <button

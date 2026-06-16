@@ -27,8 +27,12 @@ Credenciales (ver `.env.local`):
   Cada módulo pide su cliente con `getDb('estrategia')`.
 - **Config declarativa de verticales** (`src/lib/verticals.ts`): único origen de verdad
   para menú, rutas, color de acento, DB y el cruce entre verticales.
-- **Auth + proxy unificados** (`src/proxy.ts` + `/api/auth/login`): protege todo salvo
-  `/login`, inyecta `x-user-role` y `x-vertical`.
+- **Auth con Supabase Auth** (proyecto `estrategia`): login por usuario/email
+  (`signInWithPassword`, server actions en `src/app/actions/auth.ts`), sesión por
+  cookies (`@supabase/ssr`) y refresh en `middleware.ts`. Roles en la tabla
+  `profiles` (`superadmin` | `admin` | `viewer`) y acceso por pantalla por usuario
+  en `user_screen_access`. El superadmin gestiona usuarios en `/admin/usuarios`.
+  Migración: `supabase_auth_rbac_setup.sql`.
 
 ## Selector CNE / AE
 

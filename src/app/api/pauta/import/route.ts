@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { parsePautaWorkbook, ExcelParseError } from "@/lib/campana/excel";
 import { replaceCampaignFromPlan } from "@/lib/campana/data";
+import { requireEditor } from "@/lib/auth/access";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -8,10 +9,8 @@ export const maxDuration = 30;
 const MAX_BYTES = 5 * 1024 * 1024;
 
 export async function POST(req: Request) {
-  const role = (req as Request & { headers: Headers }).headers.get("x-user-role");
-  if (role !== "admin") {
-    return NextResponse.json({ error: "No autorizado." }, { status: 401 });
-  }
+  const guard = await requireEditor();
+  if ("error" in guard) return guard.error;
 
   let file: File | null = null;
   try {

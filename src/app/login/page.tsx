@@ -1,46 +1,35 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Lock, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
+import React, { useActionState } from "react";
+import { useFormStatus } from "react-dom";
+import { User, Lock, Eye, EyeOff, ShieldCheck, Loader2 } from "lucide-react";
+import { signIn, type AuthState } from "@/app/actions/auth";
+
+const initialState: AuthState = { error: null };
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex w-full items-center justify-center gap-2 rounded-xl accent-bg py-3 text-sm font-black text-black transition-all hover:neon-glow disabled:opacity-50"
+    >
+      {pending ? (
+        <Loader2 className="h-4.5 w-4.5 animate-spin" />
+      ) : (
+        <>
+          <ShieldCheck className="h-4.5 w-4.5" />
+          Ingresar
+        </>
+      )}
+    </button>
+  );
+}
 
 export default function LoginPage() {
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [show, setShow] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Contraseña incorrecta.");
-        setPassword("");
-        inputRef.current?.focus();
-      } else {
-        router.push("/cne");
-        router.refresh();
-      }
-    } catch {
-      setError("Error de conexión.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [state, formAction] = useActionState(signIn, initialState);
+  const [show, setShow] = React.useState(false);
 
   return (
     <div className="grid-overlay flex min-h-[100dvh] items-center justify-center px-4">
@@ -55,14 +44,26 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form action={formAction} className="space-y-4">
+          <div className="relative">
+            <User className="absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[var(--text-faint)]" />
+            <input
+              name="email"
+              type="text"
+              autoComplete="username"
+              required
+              placeholder="Usuario o correo"
+              className="glass w-full rounded-xl py-3 pl-11 pr-4 text-sm text-[var(--text)] placeholder:text-[var(--text-faint)] focus:neon-border focus:outline-none"
+            />
+          </div>
+
           <div className="relative">
             <Lock className="absolute left-3.5 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[var(--text-faint)]" />
             <input
-              ref={inputRef}
+              name="password"
               type={show ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
               placeholder="Contraseña de acceso"
               className="glass w-full rounded-xl py-3 pl-11 pr-11 text-sm text-[var(--text)] placeholder:text-[var(--text-faint)] focus:neon-border focus:outline-none"
             />
@@ -75,30 +76,17 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {error && (
+          {state?.error && (
             <p className="rounded-lg bg-rose-500/10 px-3 py-2 text-center text-xs font-semibold text-rose-300">
-              {error}
+              {state.error}
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={loading || !password}
-            className="flex w-full items-center justify-center gap-2 rounded-xl accent-bg py-3 text-sm font-black text-black transition-all hover:neon-glow disabled:opacity-50"
-          >
-            {loading ? (
-              <Loader2 className="h-4.5 w-4.5 animate-spin" />
-            ) : (
-              <>
-                <ShieldCheck className="h-4.5 w-4.5" />
-                Ingresar
-              </>
-            )}
-          </button>
+          <SubmitButton />
         </form>
 
         <p className="mt-6 text-center text-[10px] text-[var(--text-faint)]">
-          Acceso restringido · Sesión segura de 8 horas
+          Acceso restringido · Sesión segura
         </p>
       </div>
     </div>

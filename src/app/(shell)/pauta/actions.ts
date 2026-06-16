@@ -2,8 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { getCampanaAdmin } from "@/lib/supabase/campana-admin";
+import { getServerAccess } from "@/lib/auth/access";
+import { canEdit } from "@/lib/auth/rbac";
 
 export type ActionResult = { ok: true; message: string } | { ok: false; error: string };
+
+/** Devuelve un ActionResult de error si el usuario no puede editar; null si sí. */
+async function ensureEditor(): Promise<ActionResult | null> {
+  const access = await getServerAccess();
+  if (!access || !canEdit(access.role)) return { ok: false, error: "No autorizado." };
+  return null;
+}
 
 function num(formData: FormData, key: string): number {
   const raw = String(formData.get(key) ?? "").replace(",", ".");
@@ -15,6 +24,8 @@ export async function updateParamsAction(
   _prev: ActionResult | null,
   formData: FormData,
 ): Promise<ActionResult> {
+  const denied = await ensureEditor();
+  if (denied) return denied;
   const id = String(formData.get("campaign_id") ?? "");
   if (!id) return { ok: false, error: "ID de campaña no encontrado." };
 
@@ -42,6 +53,8 @@ export async function updateChannelAction(
   _prev: ActionResult | null,
   formData: FormData,
 ): Promise<ActionResult> {
+  const denied = await ensureEditor();
+  if (denied) return denied;
   const id = String(formData.get("channel_id") ?? "");
   if (!id) return { ok: false, error: "ID de canal no encontrado." };
 
@@ -72,6 +85,8 @@ export async function updateMetricsAction(
   _prev: ActionResult | null,
   formData: FormData,
 ): Promise<ActionResult> {
+  const denied = await ensureEditor();
+  if (denied) return denied;
   const campaignId = String(formData.get("campaign_id") ?? "");
   if (!campaignId) return { ok: false, error: "ID de campaña no encontrado." };
 
@@ -102,6 +117,8 @@ export async function saveDailyActualsAction(
   _prev: ActionResult | null,
   formData: FormData,
 ): Promise<ActionResult> {
+  const denied = await ensureEditor();
+  if (denied) return denied;
   const campaignId = String(formData.get("campaign_id") ?? "");
   if (!campaignId) return { ok: false, error: "ID de campaña no encontrado." };
 
@@ -149,6 +166,8 @@ export async function saveDailyImpressionsAction(
   _prev: ActionResult | null,
   formData: FormData,
 ): Promise<ActionResult> {
+  const denied = await ensureEditor();
+  if (denied) return denied;
   const campaignId = String(formData.get("campaign_id") ?? "");
   if (!campaignId) return { ok: false, error: "ID de campaña no encontrado." };
 
@@ -193,6 +212,8 @@ export async function saveDailyImpressionsAction(
 }
 
 export async function updateRealInvestmentAction(formData: FormData) {
+  const access = await getServerAccess();
+  if (!access || !canEdit(access.role)) return;
   const id = String(formData.get("channel_id") ?? "");
   if (!id) return;
 

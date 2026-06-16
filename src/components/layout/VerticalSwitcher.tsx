@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Check } from "lucide-react";
-import { VERTICALS, VERTICAL_IDS, type VerticalId } from "@/lib/verticals";
+import { VERTICALS, VERTICAL_IDS, modulesFor, type VerticalId } from "@/lib/verticals";
 import { useVertical } from "@/context/VerticalContext";
+import { useLayout } from "@/context/LayoutContext";
 import { useToast } from "@/context/ToastContext";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
@@ -16,10 +17,21 @@ import { cn } from "@/lib/utils";
  */
 export function VerticalSwitcher() {
   const { vertical, config, switchVertical, isSwitching } = useVertical();
+  const { role, allowedScreens } = useLayout();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  // Verticales visibles: el superadmin ve todas; el resto, solo aquellas con al
+  // menos una pantalla permitida (el vertical actual siempre se incluye).
+  const visibleIds = useMemo(() => {
+    if (role === "superadmin") return VERTICAL_IDS;
+    const allow = new Set(allowedScreens);
+    return VERTICAL_IDS.filter(
+      (id) => id === vertical || modulesFor(id).some((m) => allow.has(m.path)),
+    );
+  }, [role, allowedScreens, vertical]);
 
   // slug del módulo actual: /cne/rrss -> "rrss"
   const currentSlug = pathname?.split("/").filter(Boolean)[1];
@@ -78,7 +90,7 @@ export function VerticalSwitcher() {
           style={{ background: "#0b1120" }}
           role="listbox"
         >
-          {VERTICAL_IDS.map((id) => {
+          {visibleIds.map((id) => {
             const v = VERTICALS[id];
             const active = id === vertical;
             return (

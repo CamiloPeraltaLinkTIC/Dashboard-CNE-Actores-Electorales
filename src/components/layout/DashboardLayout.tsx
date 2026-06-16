@@ -6,6 +6,7 @@ import { Sidebar } from "./Sidebar";
 import { CommandPalette } from "./CommandPalette";
 import { PageTransition } from "./PageTransition";
 import { NavProgress } from "./NavProgress";
+import { AccessSync } from "./AccessSync";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [cmdOpen, setCmdOpen] = useState(false);
@@ -23,6 +24,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden">
+      <AccessSync />
       <NavProgress />
       <Topbar onOpenCommand={() => setCmdOpen(true)} />
       <div className="relative flex flex-1 overflow-hidden">
