@@ -166,34 +166,6 @@ body::before {
   background-clip: content-box;
 }
 
-/* ---- Selector de fecha: icono de calendario visible en tema oscuro ----
-   Forzamos esquema oscuro en los inputs de fecha y reemplazamos el indicador
-   nativo (::-webkit-calendar-picker-indicator), que es oscuro por defecto y se
-   pierde sobre el fondo "glass", por un calendario BLANCO en base64 (a prueba
-   de fallos de parseo del data-URI). Antes usábamos `filter: invert()`, pero
-   chocaba con `color-scheme: dark` y dejaba el icono negro. */
-input[type="date"],
-input[type="month"] {
-  color-scheme: dark;
-}
-input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="month"]::-webkit-calendar-picker-indicator {
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI0IiB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHJ4PSIyIi8+PHBhdGggZD0iTTE2IDJ2NE04IDJ2NE0zIDEwaDE4Ii8+PC9zdmc+") !important;
-  background-size: contain !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  width: 1.05rem;
-  height: 1.05rem;
-  opacity: 1 !important;
-  filter: none !important;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-input[type="date"]::-webkit-calendar-picker-indicator:hover,
-input[type="month"]::-webkit-calendar-picker-indicator:hover {
-  opacity: 0.7 !important;
-}
-
 /* ---- Animaciones ---- */
 @keyframes floaty {
   0%, 100% { transform: translateY(0); }
