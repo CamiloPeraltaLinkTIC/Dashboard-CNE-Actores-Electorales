@@ -85,6 +85,7 @@ export function HistoryChart({ data }: HistoryChartProps) {
                   fillOpacity={1}
                   fill="url(#colorUsers)"
                   name="Usuarios Activos"
+                  connectNulls
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -160,6 +161,7 @@ export function HistoryChart({ data }: HistoryChartProps) {
                   fillOpacity={1}
                   fill="url(#colorResolutions)"
                   name="Resoluciones Custos"
+                  connectNulls
                 />
               </AreaChart>
             </ResponsiveContainer>
