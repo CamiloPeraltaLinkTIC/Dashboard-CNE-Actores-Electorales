@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: "Custos · Centro de Mando CNE / AE",
   description:
     "Dashboard unificado de inteligencia electoral — CNE y Actores Electorales en un solo centro de mando.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

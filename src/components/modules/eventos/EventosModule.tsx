@@ -133,6 +133,84 @@ export function EventosModule() {
         ],
       },
       {
+        key: "foro-de-juventudes",
+        label: "Foro de Juventudes",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="foro-de-juventudes"
+                title="Foro de Juventudes"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="foro-de-juventudes-listening"
+                title="Análisis de Listening: Foro de Juventudes"
+              />
+            ),
+          },
+        ],
+      },
+      {
+        key: "moi",
+        label: "MOI",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="moi"
+                title="MOI"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="moi-listening"
+                title="Análisis de Listening: MOI"
+              />
+            ),
+          },
+        ],
+      },
+      {
+        key: "votaciones-segunda-vuelta",
+        label: "Votaciones Segunda Vuelta",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="votaciones-segunda-vuelta"
+                title="Votaciones Segunda Vuelta"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="votaciones-segunda-vuelta-listening"
+                title="Análisis de Listening: Votaciones Segunda Vuelta"
+              />
+            ),
+          },
+        ],
+      },
+      {
         key: "eventos",
         label: "Listening General",
         subTabs: [
