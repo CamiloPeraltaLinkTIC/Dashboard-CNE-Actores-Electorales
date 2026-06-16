@@ -33,6 +33,11 @@ export async function GET(request: Request) {
       total,
       networks,
       profileCount: Array.isArray(profiles) ? profiles.length : 0,
+      // DEBUG temporal: estructura cruda para ver qué campos trae Hootsuite.
+      _debug: {
+        sampleKeys: Array.isArray(profiles) && profiles[0] ? Object.keys(profiles[0]) : [],
+        sample: Array.isArray(profiles) ? profiles.slice(0, 3) : [],
+      },
     });
   } catch (e) {
     return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 502 });

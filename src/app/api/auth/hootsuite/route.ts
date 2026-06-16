@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
+import { saveRefreshToken } from "@/lib/hootsuite";
 
 export const runtime = "nodejs";
+
+// Cuenta a la que pertenece la autorización (este flujo es para CNE).
+const ACCOUNT = "cne";
 
 /**
  * Flujo OAuth2 de Hootsuite para GENERAR el refresh token (uso único de setup).
@@ -63,15 +67,18 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "No se pudo intercambiar el token", details: data });
     }
 
+    // Guardar el refresh token en BD (no en .env): las rotaciones se persisten solas.
+    if (data.refresh_token) {
+      await saveRefreshToken(ACCOUNT, data.refresh_token);
+    }
+
     return new NextResponse(
       `<html><body style="font-family:sans-serif;padding:40px;line-height:1.6;background:#0b1120;color:#e8edf7;">
         <div style="max-width:640px;margin:0 auto;background:#111621;padding:30px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
-          <h2 style="color:#22d3ee;margin-top:0;">¡Autenticación exitosa!</h2>
-          <p>Copia esta línea en tu <code>.env.local</code> y reinicia el servidor:</p>
-          <div style="background:#0b1120;color:#22d3ee;padding:15px;border-radius:8px;font-family:monospace;word-break:break-all;margin-bottom:20px;">
-            CNE_HOOTSUITE_REFRESH_TOKEN="${data.refresh_token}"
-          </div>
-          <p style="font-size:14px;color:#8a93a8;">Ya puedes cerrar esta ventana.</p>
+          <h2 style="color:#22d3ee;margin-top:0;">¡Hootsuite conectado!</h2>
+          <p>La cuenta <strong>${ACCOUNT.toUpperCase()}</strong> quedó vinculada y el token se guardó de forma segura.
+          Ya puedes cerrar esta ventana y abrir la pestaña <strong>"En vivo (Hootsuite)"</strong> en Redes Sociales de CNE.</p>
+          <p style="font-size:13px;color:#8a93a8;">No necesitas pegar nada en <code>.env.local</code>; las renovaciones se gestionan automáticamente.</p>
         </div>
       </body></html>`,
       { headers: { "Content-Type": "text/html" } },
