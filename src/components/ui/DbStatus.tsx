@@ -8,6 +8,7 @@ const LABELS: Record<DbName, string> = {
   analytics: "DB_ANALYTICS",
   estrategia: "DB_ESTRATEGIA",
   content: "DB_CONTENT",
+  campana: "DB_CAMPANA",
 };
 
 /**
