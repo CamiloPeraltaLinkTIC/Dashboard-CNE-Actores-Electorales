@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { EstrategiaDashboardView } from "./EstrategiaDashboardView";
 import { ListeningDashboardView } from "./ListeningDashboardView";
+import { HootsuiteLiveView } from "./HootsuiteLiveView";
 import { DbStatus } from "@/components/ui/DbStatus";
 import { TabBar } from "@/components/ui/TabBar";
 import type { VerticalId } from "@/lib/verticals";
@@ -32,6 +33,11 @@ export function RrssModule({ vertical }: { vertical: VerticalId }) {
           key: "listening",
           label: "Listening",
           node: <ListeningDashboardView categoria="cne_rrss" title="Análisis de Listening · CNE" />,
+        },
+        {
+          key: "hootsuite",
+          label: "En vivo (Hootsuite)",
+          node: <HootsuiteLiveView account="cne" />,
         },
       ];
     }

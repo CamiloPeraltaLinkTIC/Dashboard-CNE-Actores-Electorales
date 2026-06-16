@@ -1,23 +1,40 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import type { AppRole } from "@/lib/auth/rbac";
 
 interface LayoutContextType {
   isSidebarOpen: boolean;
   setSidebarOpen: (isOpen: boolean) => void;
   isFullscreen: boolean;
   toggleFullscreen: () => void;
-  userRole: string;
+  /** Rol normalizado real de la app (superadmin | admin | viewer). */
+  role: AppRole;
+  /** Compat para el código existente: colapsa `superadmin` → `admin`, de modo que
+   *  los checks legacy (`userRole === 'admin'` / `=== 'viewer'`) tratan al
+   *  superadmin como editor sin necesidad de modificarlos. */
+  userRole: AppRole;
+  /** Paths de módulo permitidos (vacío = sin acceso a módulos; superadmin ve todo). */
+  allowedScreens: string[];
+  /** Nombre visible y correo del usuario autenticado. */
+  userName: string;
+  email: string;
 }
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 
 export function LayoutProvider({
   children,
-  initialRole = "viewer",
+  role = "viewer",
+  allowedScreens = [],
+  userName = "",
+  email = "",
 }: {
   children: React.ReactNode;
-  initialRole?: string;
+  role?: AppRole;
+  allowedScreens?: string[];
+  userName?: string;
+  email?: string;
 }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -38,7 +55,17 @@ export function LayoutProvider({
 
   return (
     <LayoutContext.Provider
-      value={{ isSidebarOpen, setSidebarOpen, isFullscreen, toggleFullscreen, userRole: initialRole }}
+      value={{
+        isSidebarOpen,
+        setSidebarOpen,
+        isFullscreen,
+        toggleFullscreen,
+        role,
+        userRole: role === "superadmin" ? "admin" : role,
+        allowedScreens,
+        userName,
+        email,
+      }}
     >
       {children}
     </LayoutContext.Provider>

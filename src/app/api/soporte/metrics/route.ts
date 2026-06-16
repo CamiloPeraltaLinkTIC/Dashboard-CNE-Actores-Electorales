@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/supabase';
+import { requireEditor } from '@/lib/auth/access';
 
 const supabase = getDb("estrategia");
 
@@ -26,6 +27,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const guard = await requireEditor();
+  if ("error" in guard) return guard.error;
   try {
     const body = await request.json();
     const { date, ...metrics } = body;

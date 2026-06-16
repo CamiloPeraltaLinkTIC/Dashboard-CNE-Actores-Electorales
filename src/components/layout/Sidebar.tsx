@@ -12,20 +12,43 @@ import { cn } from "@/lib/utils";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { isSidebarOpen, setSidebarOpen } = useLayout();
+  const { isSidebarOpen, setSidebarOpen, role, allowedScreens } = useLayout();
   const { vertical, config } = useVertical();
   const [collapsed, setCollapsed] = useState(false);
 
   const groups = useMemo(() => {
-    const mods = modulesFor(vertical);
+    const isSuper = role === "superadmin";
+
+    // Filtra los módulos del vertical por las pantallas permitidas del usuario.
+    let mods = modulesFor(vertical);
+    if (!isSuper) {
+      const allow = new Set(allowedScreens);
+      mods = mods.filter((m) => allow.has(m.path));
+    }
+
+    // Entrada de administración (solo superadmin), presente en cualquier vertical.
+    const adminMods: ModuleDef[] = isSuper
+      ? [
+          {
+            slug: "usuarios",
+            title: "Usuarios",
+            description: "Gestión de usuarios y accesos",
+            path: "/admin/usuarios",
+            db: "estrategia",
+            icon: "Users",
+            group: "Administración",
+          },
+        ]
+      : [];
+
     const map = new Map<string, ModuleDef[]>();
-    for (const m of mods) {
+    for (const m of [...mods, ...adminMods]) {
       const g = m.group ?? "General";
       if (!map.has(g)) map.set(g, []);
       map.get(g)!.push(m);
     }
     return Array.from(map.entries());
-  }, [vertical]);
+  }, [vertical, role, allowedScreens]);
 
   return (
     <>

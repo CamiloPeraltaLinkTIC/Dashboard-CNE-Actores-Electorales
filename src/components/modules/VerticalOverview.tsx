@@ -6,13 +6,20 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { VERTICALS, SHARED_MODULES, type VerticalId } from "@/lib/verticals";
 import { GlassPanel } from "@/components/ui/GlassPanel";
-import { KPICard } from "@/components/ui/KPICard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Icon } from "@/components/ui/icon";
+import { useLayout } from "@/context/LayoutContext";
 
 export function VerticalOverview({ id }: { id: VerticalId }) {
   const v = VERTICALS[id];
-  const modules = [...v.modules, ...SHARED_MODULES];
+  const { role, allowedScreens } = useLayout();
+
+  // Solo se muestran las pantallas a las que el usuario tiene acceso (superadmin ve todo).
+  const allModules = [...v.modules, ...SHARED_MODULES];
+  const modules =
+    role === "superadmin"
+      ? allModules
+      : allModules.filter((m) => allowedScreens.includes(m.path));
 
   return (
     <div>
@@ -22,16 +29,8 @@ export function VerticalOverview({ id }: { id: VerticalId }) {
         icon={v.icon}
       />
 
-      {/* KPIs ilustrativos del vertical */}
-      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KPICard label="Módulos activos" value={v.modules.length} icon="LayoutDashboard" index={0} />
-        <KPICard label="Transversales" value={SHARED_MODULES.length} icon="LifeBuoy" index={1} />
-        <KPICard label="Fuentes de datos" value={3} icon="BarChart3" hint="Supabase" index={2} />
-        <KPICard label="Vertical" value={v.shortLabel} icon={v.icon} index={3} />
-      </div>
-
       {/* Grid de módulos */}
-      <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-[var(--text-faint)]">
+      <h2 className="mb-3 mt-2 text-xs font-black uppercase tracking-widest text-[var(--text-faint)]">
         Módulos del vertical
       </h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
