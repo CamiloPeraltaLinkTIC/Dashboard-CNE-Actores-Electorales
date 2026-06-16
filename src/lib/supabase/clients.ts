@@ -30,10 +30,16 @@ export const dbContent = make(
   process.env.NEXT_PUBLIC_DB_CONTENT_ANON_KEY
 );
 
+export const dbCampana = make(
+  process.env.NEXT_PUBLIC_DB_CAMPANA_URL,
+  process.env.NEXT_PUBLIC_DB_CAMPANA_ANON_KEY
+);
+
 export const DBS = {
   analytics: dbAnalytics,
   estrategia: dbEstrategia,
   content: dbContent,
+  campana: dbCampana,
 } as const;
 
 export type DbName = keyof typeof DBS;

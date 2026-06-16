@@ -56,7 +56,7 @@ export function Sidebar() {
         {/* Cabecera del vertical activo */}
         <div className={cn("px-2 pt-5 pb-3", collapsed ? "px-2" : "px-4")}>
           <Link
-            href={`/${vertical}`}
+            href={vertical === "campana" ? "/pauta" : `/${vertical}`}
             onClick={() => setSidebarOpen(false)}
             className={cn(
               "glass-strong flex items-center rounded-xl p-3 transition-all hover:neon-border",
@@ -133,7 +133,7 @@ export function Sidebar() {
         {!collapsed && (
           <div className="border-t border-white/5 p-4">
             <p className="text-[10px] text-[var(--text-faint)]">
-              Dashboard Unificado · {config.label}
+              By LinkTIC · {config.label}
             </p>
           </div>
         )}

@@ -49,7 +49,7 @@ export default function LoginPage() {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl accent-bg text-2xl font-black text-black neon-glow animate-floaty">
             C
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-[var(--text)]">CUSTOS</h1>
+          <h1 className="text-2xl font-black tracking-tight text-[var(--text)]">MARTHA</h1>
           <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[var(--text-faint)]">
             Centro de Mando · CNE / AE
           </p>

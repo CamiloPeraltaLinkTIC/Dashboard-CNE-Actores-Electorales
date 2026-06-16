@@ -38,6 +38,12 @@
   --glow: 232, 121, 249;
 }
 
+[data-vertical="campana"] {
+  --accent: #f97316;
+  --accent-soft: rgba(249, 115, 22, 0.14);
+  --glow: 249, 115, 22;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

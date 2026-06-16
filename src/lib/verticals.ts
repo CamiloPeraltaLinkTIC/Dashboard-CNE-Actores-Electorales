@@ -11,7 +11,7 @@ import type { DbName } from "./supabase/clients";
  *  - el cruce entre verticales (mismo `slug` -> salto equivalente)
  */
 
-export type VerticalId = "cne" | "ae";
+export type VerticalId = "cne" | "ae" | "campana";
 
 export interface ModuleDef {
   /** Identificador estable; si dos verticales comparten slug, el switcher salta al equivalente. */
@@ -120,6 +120,63 @@ export const VERTICALS: Record<VerticalId, VerticalDef> = {
       },
     ],
   },
+  campana: {
+    id: "campana",
+    label: "Pauta Digital",
+    shortLabel: "Pauta",
+    description: "Gestión de pauta digital por canal y seguimiento presupuestal",
+    accent: "#f97316",
+    accentSoft: "rgba(249, 115, 22, 0.14)",
+    glow: "249, 115, 22",
+    icon: "Megaphone",
+    modules: [
+      {
+        slug: "canales",
+        title: "Distribución por Canal",
+        description: "Reparto presupuestario y métricas proyectadas por canal",
+        path: "/pauta/canales",
+        db: "campana",
+        icon: "BarChart2",
+        group: "Análisis",
+      },
+      {
+        slug: "diario",
+        title: "Desglose Diario",
+        description: "Inversión distribuida día a día por canal",
+        path: "/pauta/diario",
+        db: "campana",
+        icon: "CalendarDays",
+        group: "Análisis",
+      },
+      {
+        slug: "proyecciones",
+        title: "Proyecciones",
+        description: "Estimación de impresiones, clicks y alcance",
+        path: "/pauta/proyecciones",
+        db: "campana",
+        icon: "TrendingUp",
+        group: "Análisis",
+      },
+      {
+        slug: "importar",
+        title: "Importar Excel",
+        description: "Carga masiva del plan de pauta desde .xlsx",
+        path: "/pauta/importar",
+        db: "campana",
+        icon: "Upload",
+        group: "Administración",
+      },
+      {
+        slug: "configuracion",
+        title: "Configuración",
+        description: "Edita parámetros, canales y datos reales de la pauta",
+        path: "/pauta/configuracion",
+        db: "campana",
+        icon: "Settings2",
+        group: "Administración",
+      },
+    ],
+  },
 };
 
 /** Módulos transversales: aparecen en ambos verticales. */
@@ -149,15 +206,16 @@ export const VERTICAL_IDS = Object.keys(VERTICALS) as VerticalId[];
 export const DEFAULT_VERTICAL: VerticalId = "cne";
 
 export function isVerticalId(value: string | undefined | null): value is VerticalId {
-  return value === "cne" || value === "ae";
+  return value === "cne" || value === "ae" || value === "campana";
 }
 
 export function getVertical(id: VerticalId): VerticalDef {
   return VERTICALS[id];
 }
 
-/** Módulos visibles para un vertical (propios + transversales). */
+/** Módulos visibles para un vertical (propios + transversales). Campaña es autónoma. */
 export function modulesFor(id: VerticalId): ModuleDef[] {
+  if (id === "campana") return VERTICALS[id].modules;
   return [...VERTICALS[id].modules, ...SHARED_MODULES];
 }
 
@@ -166,10 +224,16 @@ export function modulesFor(id: VerticalId): ModuleDef[] {
  * Si existe un módulo con el mismo slug en el vertical destino, salta a él;
  * si no, cae al overview del vertical.
  */
+/** Ruta raíz de un vertical (el overview). Para "campana" la carpeta es /pauta. */
+function rootPath(id: VerticalId): string {
+  if (id === "campana") return "/pauta";
+  return `/${id}`;
+}
+
 export function equivalentPath(targetVertical: VerticalId, currentSlug?: string): string {
   if (currentSlug) {
     const match = VERTICALS[targetVertical].modules.find((m) => m.slug === currentSlug);
     if (match) return match.path;
   }
-  return `/${targetVertical}`;
+  return rootPath(targetVertical);
 }
