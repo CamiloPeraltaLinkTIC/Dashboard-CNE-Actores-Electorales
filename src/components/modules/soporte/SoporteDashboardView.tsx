@@ -31,22 +31,37 @@ export function SoporteDashboardView() {
     refreshHistory();
   }, []);
 
-  // Generate the real daily values for the last 30 days (no rolling/accumulated)
+  // Genera los valores reales por día (sin acumulado), desde el primer día con
+  // datos hasta hoy (máximo 30 días). Así no se muestran días vacíos previos al
+  // primer registro ingresado.
   const history = React.useMemo(() => {
-    // Build a complete daily sequence for the last 30 days, newest first.
     const end = new Date();
-    const start = subDays(end, 29);
+    const floor = subDays(end, 29); // no mostramos más de 30 días
+
+    // Fecha del primer dato ingresado; antes de eso no hay nada que graficar.
+    let start = floor;
+    if (rawHistory.length > 0) {
+      const earliest = rawHistory.reduce(
+        (min, h) => (h.date < min ? h.date : min),
+        rawHistory[0].date
+      );
+      const earliestDate = new Date(earliest + "T00:00:00");
+      if (earliestDate > floor) start = earliestDate;
+    }
+
     const days = eachDayOfInterval({ start, end });
 
     return days.map(day => {
       const dateStr = formatDate(day, "yyyy-MM-dd");
       const existingData = rawHistory.find(h => h.date === dateStr);
+      // Días sin datos: null (no 0) para que la gráfica los salte (connectNulls)
+      // en lugar de dibujar una caída a cero.
       return existingData || {
         date: dateStr,
-        usuarios_activos: 0,
-        porcentaje_usuarios: 0,
-        resoluciones_automatizadas: 0,
-        conversaciones_no_resueltas: 0,
+        usuarios_activos: null,
+        porcentaje_usuarios: null,
+        resoluciones_automatizadas: null,
+        conversaciones_no_resueltas: null,
         isPlaceholder: true
       };
     }).sort((a, b) => b.date.localeCompare(a.date)); // Newest first
@@ -90,7 +105,8 @@ export function SoporteDashboardView() {
   const hasDataForSelectedDate = metrics.usuarios_activos !== "0" || metrics.porcentaje_usuarios !== "0" || metrics.resoluciones_automatizadas !== "0" || metrics.conversaciones_no_resueltas !== "0";
 
   const currentDayDate = new Date(selectedDate + "T00:00:00");
-  const prevDateText = `Día: ${formatDate(currentDayDate, "dd MMM yyyy", { locale: es })}`;
+  const thirtyDaysAgoDate = subDays(currentDayDate, 29);
+  const prevDateText = `Periodo: ${formatDate(thirtyDaysAgoDate, "dd MMM", { locale: es })} — ${formatDate(currentDayDate, "dd MMM", { locale: es })}`;
 
   return (
     <div className="space-y-8 pb-12">
