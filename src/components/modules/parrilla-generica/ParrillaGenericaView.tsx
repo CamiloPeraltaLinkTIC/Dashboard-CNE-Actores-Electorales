@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getDb } from "@/lib/supabase";
+import { useLayout } from "@/context/LayoutContext";
 
 const supabase = getDb("content");
 
@@ -97,8 +98,7 @@ const inputCls =
 
 export function ParrillaGenericaView() {
   const [isMounted, setIsMounted] = useState(false);
-  // El shell gestiona auth; aquí el rol es local (editor por defecto en módulo transversal).
-  const [role, setRole] = useState<"editor" | "viewer">("editor");
+  const { userRole: role } = useLayout();
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [contentList, setContentList] = useState<ContentItem[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -235,7 +235,7 @@ export function ParrillaGenericaView() {
   }, []);
 
   useEffect(() => {
-    if (!draggingId || role !== "editor") return;
+    if (!draggingId || role !== "admin") return;
 
     const onMouseMove = (e: MouseEvent) => {
       setHasMoved(true);
@@ -283,7 +283,7 @@ export function ParrillaGenericaView() {
   }, [draggingId, dragStartY, dragStartTime, contentList, role]);
 
   const handleOpenAddModal = (time: string, platform: PlatformId) => {
-    if (role !== "editor") return;
+    if (role !== "admin") return;
     setFormId("");
     const [h, m] = time.split(":");
     setFormHour(h || "07");
@@ -300,7 +300,7 @@ export function ParrillaGenericaView() {
   };
 
   const handleOpenEditModal = (item: ContentItem) => {
-    if (role !== "editor") return;
+    if (role !== "admin") return;
     setFormId(item.id);
     const [h, m] = item.time.split(":");
     setFormHour(h || "07");
@@ -317,7 +317,7 @@ export function ParrillaGenericaView() {
   };
 
   const handleDragStart = (e: React.MouseEvent, item: ContentItem) => {
-    if (role !== "editor") return;
+    if (role !== "admin") return;
     if (e.button !== 0) return;
     if ((e.target as HTMLElement).closest("button")) return;
 
@@ -328,7 +328,7 @@ export function ParrillaGenericaView() {
   };
 
   const handleDeleteItem = async () => {
-    if (role !== "editor" || !itemToDelete) return;
+    if (role !== "admin" || !itemToDelete) return;
 
     setIsSaving(true);
     setIsModalOpen(false);
@@ -484,9 +484,9 @@ export function ParrillaGenericaView() {
         </div>
       )}
 
-      {/* Toolbar de rol (auth la gestiona el shell; rol local del módulo) */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {role === "editor" ? (
+      {/* Badge de rol */}
+      <div className="flex flex-wrap items-center gap-3">
+        {role === "admin" ? (
           <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3.5 py-1.5 text-xs font-bold text-emerald-300">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             Modo Editor
@@ -497,19 +497,10 @@ export function ParrillaGenericaView() {
             Modo Visualizador
           </span>
         )}
-
-        <button
-          type="button"
-          onClick={() => setRole((r) => (r === "editor" ? "viewer" : "editor"))}
-          className="glass rounded-xl px-3.5 py-1.5 text-xs font-bold text-[var(--text-dim)] hover:text-[var(--text)]"
-          title="Cambiar rol"
-        >
-          Cambiar a {role === "editor" ? "Visualizador" : "Editor"}
-        </button>
       </div>
 
       {/* Helper Banner depending on permissions */}
-      {role === "editor" ? (
+      {role === "admin" ? (
         <div className="glass flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm text-[var(--text-dim)]">
           <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="shrink-0 text-[var(--accent)]">
             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708.286a.75.75 0 01-1.063-.852l.708-.286zm0 0L10.5 12.75M12 20.25a8.25 8.25 0 100-16.5 8.25 8.25 0 000 16.5z" />
@@ -641,7 +632,7 @@ export function ParrillaGenericaView() {
                       className={`group relative h-[180px] border-b border-white/5 border-r border-r-white/5 transition-colors hover:bg-white/5 ${
                         isActive ? "bg-amber-500/[0.04]" : ""
                       }`}
-                      onClick={() => role === "editor" && handleOpenAddModal(hour, plat.id)}
+                      onClick={() => role === "admin" && handleOpenAddModal(hour, plat.id)}
                     >
                       {isActive && (
                         <div
@@ -650,7 +641,7 @@ export function ParrillaGenericaView() {
                         />
                       )}
 
-                      {role === "editor" && (
+                      {role === "admin" && (
                         <button
                           className="absolute right-1.5 top-1.5 z-40 flex h-5 w-5 items-center justify-center rounded-full accent-bg text-sm font-bold text-black opacity-0 transition hover:neon-glow group-hover:opacity-100"
                           onClick={(e) => {
@@ -673,7 +664,7 @@ export function ParrillaGenericaView() {
                           <div
                             key={cellItem.id}
                             className={`glass absolute flex flex-col justify-between gap-2 overflow-hidden rounded-xl transition-all hover:z-30 hover:-translate-y-0.5 ${
-                              role === "editor" ? "cursor-grab" : "cursor-pointer"
+                              role === "admin" ? "cursor-grab" : "cursor-pointer"
                             } ${draggingId === cellItem.id ? "cursor-grabbing opacity-90 neon-glow" : ""}`}
                             style={{
                               top: `${topPercent}%`,
@@ -689,7 +680,7 @@ export function ParrillaGenericaView() {
                               e.stopPropagation();
                               if (hasMoved) return;
 
-                              if (role === "editor") {
+                              if (role === "admin") {
                                 handleOpenEditModal(cellItem);
                               } else {
                                 setViewItem(cellItem);
@@ -743,7 +734,7 @@ export function ParrillaGenericaView() {
                               )}
                             </p>
 
-                            {role === "editor" && (
+                            {role === "admin" && (
                               <div className="mt-1 flex justify-end gap-2 border-t border-white/10 pt-2">
                                 <button
                                   className="flex items-center justify-center rounded-md p-1 text-[var(--text-dim)] transition hover:bg-white/10 hover:text-[var(--accent)]"
@@ -776,7 +767,7 @@ export function ParrillaGenericaView() {
                       })}
 
                       {/* Empty cell indicator (Always show if Editor to allow multiple) */}
-                      {role === "editor" && (
+                      {role === "admin" && (
                         <div
                           className="pointer-events-none absolute left-1/2 top-1/2 flex h-[calc(100%-24px)] w-[calc(100%-24px)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 text-[var(--accent)] opacity-0 transition group-hover:opacity-100"
                           style={{ zIndex: 1 }}

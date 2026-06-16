@@ -48,6 +48,36 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
             </div>
           ),
         },
+        {
+          key: "foro-juventudes",
+          label: "Foro de Juventudes",
+          node: (
+            <ParrillaView
+              table="parrilla_foro_juventudes_cne"
+              title="Foro de Juventudes · CNE"
+            />
+          ),
+        },
+        {
+          key: "moi",
+          label: "MOI",
+          node: (
+            <ParrillaView
+              table="parrilla_moi_cne"
+              title="MOI · CNE"
+            />
+          ),
+        },
+        {
+          key: "votaciones-segunda-vuelta",
+          label: "Votaciones Segunda Vuelta",
+          node: (
+            <ParrillaView
+              table="parrilla_votaciones_segunda_vuelta_cne"
+              title="Votaciones Segunda Vuelta · CNE"
+            />
+          ),
+        },
       ];
     }
     return [

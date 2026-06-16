@@ -241,3 +241,10 @@ input[type="month"]::-webkit-calendar-picker-indicator:hover {
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after { animation: none; }
 }
+
+/* Oculta el ícono nativo del calendario en inputs date/month
+   para que solo funcione el ícono personalizado de lucide */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
