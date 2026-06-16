@@ -31,14 +31,14 @@ export function SoporteDashboardView() {
     refreshHistory();
   }, []);
 
-  // Generate full rolling data for the last 30 days
+  // Generate the real daily values for the last 30 days (no rolling/accumulated)
   const history = React.useMemo(() => {
-    // 1. Generate a complete daily sequence for the last 60 days to have enough context
+    // Build a complete daily sequence for the last 30 days, newest first.
     const end = new Date();
-    const start = subDays(end, 59);
+    const start = subDays(end, 29);
     const days = eachDayOfInterval({ start, end });
 
-    const dailyData = days.map(day => {
+    return days.map(day => {
       const dateStr = formatDate(day, "yyyy-MM-dd");
       const existingData = rawHistory.find(h => h.date === dateStr);
       return existingData || {
@@ -50,27 +50,6 @@ export function SoporteDashboardView() {
         isPlaceholder: true
       };
     }).sort((a, b) => b.date.localeCompare(a.date)); // Newest first
-
-    // 2. Calculate 30-day rolling metrics for each of the last 30 days
-    return dailyData.slice(0, 30).map((day, index) => {
-      // Get the 30-day window ending on this day
-      // Since dailyData is sorted descending, the window is from current index to index + 29
-      const window = dailyData.slice(index, index + 30);
-
-      const rollingUsers = window.reduce((acc, curr) => acc + (Number(curr.usuarios_activos) || 0), 0);
-      const rollingNoResueltas = window.reduce((acc, curr) => acc + (Number(curr.conversaciones_no_resueltas) || 0), 0);
-      const rollingUsersPct = window.reduce((acc, curr) => acc + (Number(curr.porcentaje_usuarios) || 0), 0) / 30;
-      const rollingResolutions = window.reduce((acc, curr) => acc + (Number(curr.resoluciones_automatizadas) || 0), 0) / 30;
-
-      return {
-        ...day,
-        usuarios_activos: rollingUsers,
-        porcentaje_usuarios: rollingUsersPct.toFixed(2),
-        resoluciones_automatizadas: rollingResolutions.toFixed(2),
-        conversaciones_no_resueltas: rollingNoResueltas,
-        isRolling: true
-      };
-    });
   }, [rawHistory]);
 
   // Metrics now reflect raw data from the database for the selected day
@@ -111,8 +90,7 @@ export function SoporteDashboardView() {
   const hasDataForSelectedDate = metrics.usuarios_activos !== "0" || metrics.porcentaje_usuarios !== "0" || metrics.resoluciones_automatizadas !== "0" || metrics.conversaciones_no_resueltas !== "0";
 
   const currentDayDate = new Date(selectedDate + "T00:00:00");
-  const thirtyDaysAgoDate = subDays(currentDayDate, 29);
-  const prevDateText = `Periodo: ${formatDate(thirtyDaysAgoDate, "dd MMM", { locale: es })} — ${formatDate(currentDayDate, "dd MMM", { locale: es })}`;
+  const prevDateText = `Día: ${formatDate(currentDayDate, "dd MMM yyyy", { locale: es })}`;
 
   return (
     <div className="space-y-8 pb-12">
@@ -129,7 +107,7 @@ export function SoporteDashboardView() {
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <KPICard
           title="Usuarios Activos"
-          value={metrics.usuarios_activos}
+          value={Number(metrics.usuarios_activos || 0).toLocaleString("es-CO")}
           icon={Users}
           color="blue"
           prevText={prevDateText}
@@ -152,7 +130,7 @@ export function SoporteDashboardView() {
         />
         <KPICard
           title="Conversaciones No Resueltas"
-          value={metrics.conversaciones_no_resueltas}
+          value={Number(metrics.conversaciones_no_resueltas || 0).toLocaleString("es-CO")}
           icon={MessageCircleOff}
           color="red"
           prevText={prevDateText}

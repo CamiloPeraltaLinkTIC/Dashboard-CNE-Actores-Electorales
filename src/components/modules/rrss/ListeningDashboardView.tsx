@@ -162,7 +162,7 @@ export function EmotionShareCard({ cuota }: { cuota?: ListeningMetrics["cuota_em
                     )}
                   </div>
                   <span className="text-sm font-extrabold text-[var(--text)] min-w-[50px] text-right">
-                    {resultadosVal}
+                    {Number(resultadosVal).toLocaleString("es-CO")}
                   </span>
                 </div>
               </div>

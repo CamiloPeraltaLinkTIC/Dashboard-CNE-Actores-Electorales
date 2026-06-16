@@ -62,6 +62,7 @@ export function HistoryChart({ data }: HistoryChartProps) {
                   axisLine={false}
                   tickLine={false}
                   tick={{fill: '#8a93a8', fontSize: 12, fontWeight: 600}}
+                  tickFormatter={(val) => Number(val).toLocaleString("es-CO")}
                   dx={-10}
                 />
                 <Tooltip
@@ -74,6 +75,7 @@ export function HistoryChart({ data }: HistoryChartProps) {
                     color: '#ffffff'
                   }}
                   itemStyle={{ color: '#ffffff' }}
+                  formatter={(value: any) => [Number(value).toLocaleString("es-CO"), "Usuarios Activos"]}
                 />
                 <Area
                   type="monotone"

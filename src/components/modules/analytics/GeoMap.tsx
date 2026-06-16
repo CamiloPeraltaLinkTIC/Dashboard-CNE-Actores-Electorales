@@ -105,7 +105,7 @@ export function GeoMap({ data, height = "h-[400px]" }: GeoMapProps) {
           controller={true}
           layers={layers}
           useDevicePixels={false}
-          getTooltip={({ object }) => object && (object.city ? `${object.city}: ${object.weight} usuarios` : `${object.weight} usuarios`)}
+          getTooltip={({ object }) => object && (object.city ? `${object.city}: ${object.weight.toLocaleString("es-CO")} usuarios` : `${object.weight.toLocaleString("es-CO")} usuarios`)}
         >
           <Map
             mapStyle={{

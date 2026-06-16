@@ -101,15 +101,6 @@ export const VERTICALS: Record<VerticalId, VerticalDef> = {
         group: "Web",
       },
       {
-        slug: "prensa",
-        title: "Análisis de Prensa",
-        description: "Monitoreo de medios y prensa",
-        path: "/ae/prensa",
-        db: "estrategia",
-        icon: "Newspaper",
-        group: "Monitoreo",
-      },
-      {
         slug: "rrss",
         title: "Redes Sociales",
         description: "Estrategia y listening en redes sociales",
@@ -133,6 +124,15 @@ export const VERTICALS: Record<VerticalId, VerticalDef> = {
 
 /** Módulos transversales: aparecen en ambos verticales. */
 export const SHARED_MODULES: ModuleDef[] = [
+  {
+    slug: "prensa",
+    title: "Análisis de Prensa",
+    description: "Monitoreo de medios y prensa",
+    path: "/shared/prensa",
+    db: "estrategia",
+    icon: "Newspaper",
+    group: "Monitoreo",
+  },
   {
     slug: "soporte",
     title: "Mesa de Ayuda",

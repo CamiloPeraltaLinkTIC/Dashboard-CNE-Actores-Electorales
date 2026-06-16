@@ -56,6 +56,7 @@ export function TrafficChart({ data }: TrafficChartProps) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#8a93a8', fontSize: 12, fontWeight: 500 }}
+                tickFormatter={(v) => Number(v).toLocaleString("es-CO")}
                 dx={-10}
               />
               <Tooltip
@@ -69,6 +70,7 @@ export function TrafficChart({ data }: TrafficChartProps) {
                   fontWeight: 600
                 }}
                 itemStyle={{ color: '#e8edf7', fontWeight: 700 }}
+                formatter={(value: any) => Number(value).toLocaleString("es-CO")}
               />
               <Area
                 type="monotone"

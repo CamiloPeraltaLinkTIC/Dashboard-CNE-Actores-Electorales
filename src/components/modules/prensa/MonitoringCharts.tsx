@@ -64,6 +64,7 @@ export function MonitoringHistoricalChart({ data }: { data: any[] }) {
               <Tooltip
                 contentStyle={tooltipStyle}
                 labelFormatter={(val) => format(new Date(val + "T00:00:00"), "dd MMMM yyyy", { locale: es })}
+                formatter={(value: any) => Number(value).toLocaleString("es-CO")}
               />
               <Area
                 type="monotone"
@@ -106,6 +107,7 @@ export function MonitoringHistoricalChart({ data }: { data: any[] }) {
               <Tooltip
                 contentStyle={tooltipStyle}
                 labelFormatter={(val) => format(new Date(val + "T00:00:00"), "dd MMMM yyyy", { locale: es })}
+                formatter={(value: any) => Number(value).toLocaleString("es-CO")}
               />
               <Area
                 type="monotone"
@@ -153,11 +155,12 @@ export function MonitoringMonthlyTrendChart({ data }: { data: any[] }) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 10, fill: AXIS_FILL }}
-                tickFormatter={(val) => val.toLocaleString()}
+                tickFormatter={(val) => val.toLocaleString("es-CO")}
               />
               <Tooltip
                 contentStyle={tooltipStyle}
                 labelFormatter={(val) => format(new Date(val + "T00:00:00"), "dd MMMM yyyy", { locale: es })}
+                formatter={(value: any) => Number(value).toLocaleString("es-CO")}
               />
               <Area
                 type="monotone"
@@ -197,11 +200,12 @@ export function MonitoringMonthlyTrendChart({ data }: { data: any[] }) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 10, fill: AXIS_FILL }}
-                tickFormatter={(val) => val.toLocaleString()}
+                tickFormatter={(val) => val.toLocaleString("es-CO")}
               />
               <Tooltip
                 contentStyle={tooltipStyle}
                 labelFormatter={(val) => format(new Date(val + "T00:00:00"), "dd MMMM yyyy", { locale: es })}
+                formatter={(value: any) => Number(value).toLocaleString("es-CO")}
               />
               <Area
                 type="monotone"

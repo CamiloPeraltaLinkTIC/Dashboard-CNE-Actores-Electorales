@@ -88,9 +88,10 @@ export function AnimatedNumber({
     );
   }
 
-  // En reposo (antes de animar o ya terminado): valor EXACTO de origen.
-  const rest =
-    typeof value === "number" ? (format ? format(value) : value.toLocaleString("es-CO")) : value;
+  // En reposo (antes de animar o ya terminado): aplica el MISMO formato que durante
+  // la animación, para que los separadores de miles no desaparezcan al terminar.
+  // (En este punto `target` siempre es finito porque el caso no-numérico ya retornó.)
+  const rest = format ? format(target) : target.toLocaleString("es-CO");
   return (
     <span ref={ref} className={className}>
       {rest}

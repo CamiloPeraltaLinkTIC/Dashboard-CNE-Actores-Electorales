@@ -158,7 +158,7 @@ export async function GET(request: Request) {
         value: curr.toString(),
         change: ch.change,
         trend: ch.trend,
-        prevText: `${prev} ${title} en el ${prevDateText}`
+        prevText: `${prev.toLocaleString("es-CO")} ${title} en el ${prevDateText}`
       };
     };
 

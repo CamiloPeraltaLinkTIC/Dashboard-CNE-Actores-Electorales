@@ -141,7 +141,7 @@ function ListCard({ title, subtitle, data }: { title: string; subtitle: string; 
             <div key={idx} className="relative w-full rounded-lg overflow-hidden bg-white/5 border border-white/10 flex items-center justify-between p-3">
               <div className="absolute left-0 top-0 bottom-0 bg-[var(--accent-soft)] z-0 rounded-r-lg" style={{ width: `${width}%` }} />
               <span className="relative z-10 text-sm font-bold text-[var(--text)] truncate max-w-[75%]">{item.name}</span>
-              <span className="relative z-10 text-sm font-black text-[var(--accent)] bg-white/5 px-2 py-1 rounded-md border border-white/10">{item.users}</span>
+              <span className="relative z-10 text-sm font-black text-[var(--accent)] bg-white/5 px-2 py-1 rounded-md border border-white/10">{Number(item.users).toLocaleString("es-CO")}</span>
             </div>
           );
         })}
@@ -621,7 +621,7 @@ function ConversionsView() {
                   <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/10 flex flex-col items-center justify-center text-center group hover:bg-[var(--accent-soft)] transition-colors">
                     <Target className="w-8 h-8 text-[var(--accent)] mb-3 group-hover:scale-110 transition-transform" />
                     <h3 className="text-lg font-bold text-[var(--text)] break-all">{evt.name}</h3>
-                    <p className="text-2xl font-black text-rose-400 mt-2">{evt.conversions}</p>
+                    <p className="text-2xl font-black text-rose-400 mt-2">{Number(evt.conversions).toLocaleString("es-CO")}</p>
                     <span className="text-xs font-bold text-[var(--text-faint)] uppercase tracking-wider mt-1">Total</span>
                   </div>
                 ))
