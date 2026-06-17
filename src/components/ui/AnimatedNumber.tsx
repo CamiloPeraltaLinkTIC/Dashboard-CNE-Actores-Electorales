@@ -29,6 +29,17 @@ function parseNum(s: string): number {
 }
 
 /**
+ * Separa una cadena en su parte numérica inicial y el sufijo de magnitud que la
+ * acompaña (p.ej. "1.3M" -> { num: "1.3", suffix: "M" }). Así el contador anima
+ * el número y conserva el sufijo escrito por el usuario (M, K, B, "mill", etc.).
+ */
+function splitSuffix(s: string): { num: string; suffix: string } {
+  const m = s.match(/^\s*([0-9][0-9.,\s-]*)(.*)$/);
+  if (!m) return { num: s, suffix: "" };
+  return { num: m[1], suffix: m[2].trim() };
+}
+
+/**
  * Cuenta de 0 hasta el valor cuando entra en viewport.
  * - Nunca muestra una cifra mayor que el objetivo (clamp).
  * - Al terminar muestra el valor EXACTO de origen (cadena verbatim / número con
@@ -49,7 +60,9 @@ export function AnimatedNumber({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
 
-  const target = typeof value === "number" ? value : parseNum(String(value));
+  const { num, suffix } =
+    typeof value === "number" ? { num: String(value), suffix: "" } : splitSuffix(String(value));
+  const target = typeof value === "number" ? value : parseNum(num);
   const isNumeric = Number.isFinite(target);
 
   const [display, setDisplay] = useState(0);
@@ -83,7 +96,7 @@ export function AnimatedNumber({
     const out = format ? format(shown) : Math.round(shown).toLocaleString("es-CO");
     return (
       <span ref={ref} className={className}>
-        {out}
+        {suffix ? `${out}${suffix}` : out}
       </span>
     );
   }
@@ -94,7 +107,7 @@ export function AnimatedNumber({
   const rest = format ? format(target) : target.toLocaleString("es-CO");
   return (
     <span ref={ref} className={className}>
-      {rest}
+      {suffix ? `${rest}${suffix}` : rest}
     </span>
   );
 }
