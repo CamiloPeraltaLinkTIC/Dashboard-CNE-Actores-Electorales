@@ -132,12 +132,24 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   const [formComments, setFormComments] = useState("");
   const [formKpi, setFormKpi] = useState("");
   const [viewItem, setViewItem] = useState<ContentItem | null>(null);
+  // Aviso de conflicto: otro usuario editó el ítem que tenemos abierto en el modal
+  const [modalConflict, setModalConflict] = useState(false);
 
   // Dragging states
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragStartY, setDragStartY] = useState<number>(0);
   const [dragStartTime, setDragStartTime] = useState<string>("07:00");
   const [hasMoved, setHasMoved] = useState(false);
+
+  // Refs para evitar closures obsoletos en callbacks de realtime y drag
+  const draggingIdRef = React.useRef<string | null>(null);
+  const contentListRef = React.useRef<ContentItem[]>([]);
+  const formIdRef = React.useRef<string>("");
+
+  // Mantener refs sincronizados con el estado
+  React.useEffect(() => { draggingIdRef.current = draggingId; }, [draggingId]);
+  React.useEffect(() => { contentListRef.current = contentList; }, [contentList]);
+  React.useEffect(() => { formIdRef.current = formId; }, [formId]);
 
   // Viewer comment states
   const [viewerCommentName, setViewerCommentName] = useState("");
@@ -254,9 +266,13 @@ export function ParrillaView({ table, title }: { table: string; title: string })
           table: table,
         },
         (payload) => {
-          console.log("Change received:", payload);
           if (payload.eventType === "INSERT" || payload.eventType === "UPDATE") {
             const raw = payload.new as any;
+            if (!raw.id) return;
+
+            // No pisar el ítem que el usuario local está arrastrando en este momento
+            if (raw.id === draggingIdRef.current) return;
+
             const newItem: ContentItem = {
               id: raw.id,
               time: raw.time,
@@ -270,7 +286,13 @@ export function ParrillaView({ table, title }: { table: string; title: string })
               kpi: raw.kpi,
               viewerComments: raw.viewer_comments || [],
             };
-            if (!newItem.id) return;
+
+            // Si el modal está abierto editando este ítem, avisar del conflicto
+            // en lugar de sobreescribir silenciosamente los campos del form
+            if (raw.id === formIdRef.current && formIdRef.current !== "") {
+              setModalConflict(true);
+            }
+
             setContentList((prev) => {
               const idx = prev.findIndex((i) => i.id === newItem.id);
               let updated;
@@ -312,22 +334,16 @@ export function ParrillaView({ table, title }: { table: string; title: string })
     const onMouseMove = (e: MouseEvent) => {
       setHasMoved(true);
       const deltaY = e.clientY - dragStartY;
-      const deltaMinutes = Math.round(deltaY / 3); // 180px/60min = 3px/min
+      const deltaMinutes = Math.round(deltaY / 3);
 
       const [h, m] = dragStartTime.split(":").map(Number);
       let totalMinutes = h * 60 + m + deltaMinutes;
-
-      // Restricciones de horario (07:00 - 22:59 aprox)
       totalMinutes = Math.max(7 * 60, Math.min(22 * 60 + 59, totalMinutes));
-
-      // Snap a cada 5 minutos
       totalMinutes = Math.round(totalMinutes / 5) * 5;
 
       const newH = Math.floor(totalMinutes / 60);
       const newM = totalMinutes % 60;
-      const newTime = `${newH.toString().padStart(2, "0")}:${newM
-        .toString()
-        .padStart(2, "0")}`;
+      const newTime = `${newH.toString().padStart(2, "0")}:${newM.toString().padStart(2, "0")}`;
 
       setContentList((prev) =>
         prev.map((item) =>
@@ -339,23 +355,15 @@ export function ParrillaView({ table, title }: { table: string; title: string })
     const onMouseUp = async () => {
       const currentDraggingId = draggingId;
       setDraggingId(null);
-      localStorage.setItem(storageKey, JSON.stringify(contentList));
+      // Usar el ref para tener la lista más reciente sin que sea dep del efecto
+      const list = contentListRef.current;
+      localStorage.setItem(storageKey, JSON.stringify(list));
       try {
-        const draggedItem = contentList.find((item) => item.id === currentDraggingId);
+        const draggedItem = list.find((item) => item.id === currentDraggingId);
         if (draggedItem) {
-          await supabase.from(table).upsert({
-            id: draggedItem.id,
-            time: draggedItem.time,
-            platform: draggedItem.platform,
-            type: draggedItem.type,
-            description: draggedItem.description,
-            status: draggedItem.status,
-            duration: draggedItem.duration,
-            url: draggedItem.url,
-            comments: draggedItem.comments,
-            kpi: draggedItem.kpi,
-            viewer_comments: draggedItem.viewerComments,
-          });
+          // Solo actualizar el campo `time` para no pisar cambios concurrentes
+          // en otros campos (descripción, status, etc.) hechos por otros usuarios
+          await supabase.from(table).update({ time: draggedItem.time }).eq("id", draggedItem.id);
         }
       } catch (e) {
         console.error("Error auto-saving after drag:", e);
@@ -369,12 +377,16 @@ export function ParrillaView({ table, title }: { table: string; title: string })
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
+    // contentList eliminado de las deps: usamos contentListRef para evitar
+    // que el efecto se re-ejecute (y re-adjunte listeners) cada vez que
+    // el realtime actualiza la lista durante un drag en curso.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draggingId, dragStartY, dragStartTime, contentList, role]);
+  }, [draggingId, dragStartY, dragStartTime, role]);
 
   const handleOpenAddModal = (time: string, platform: PlatformId) => {
     if (role !== "admin") return;
     setFormId("");
+    setModalConflict(false);
     const [h, m] = time.split(":");
     setFormHour(h || "07");
     setFormMinute(m || "00");
@@ -392,6 +404,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
   const handleOpenEditModal = (item: ContentItem) => {
     if (role !== "admin") return;
     setFormId(item.id);
+    setModalConflict(false);
     const [h, m] = item.time.split(":");
     setFormHour(h || "07");
     setFormMinute(m || "00");
@@ -404,6 +417,12 @@ export function ParrillaView({ table, title }: { table: string; title: string })
     setFormComments(item.comments || "");
     setFormKpi(item.kpi || "");
     setIsModalOpen(true);
+  };
+
+  // Recargar el form con los datos más recientes del ítem en conflicto
+  const handleReloadConflictItem = () => {
+    const fresh = contentListRef.current.find((i) => i.id === formId);
+    if (fresh) handleOpenEditModal(fresh);
   };
 
   const handleDragStart = (e: React.MouseEvent, item: ContentItem) => {
@@ -584,6 +603,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsModalOpen(false);
+        setModalConflict(false);
         setViewItem(null);
         setItemToDelete(null);
       }
@@ -940,7 +960,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-5 backdrop-blur-sm"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setIsModalOpen(false);
+            if (e.target === e.currentTarget) { setIsModalOpen(false); setModalConflict(false); }
           }}
         >
           <div className="glass-strong relative h-[80dvh] w-full max-w-[700px] overflow-y-auto rounded-2xl">
@@ -951,7 +971,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
               <button
                 type="button"
                 className="flex items-center justify-center rounded-full p-1 text-[var(--text-dim)] transition hover:bg-white/10 hover:text-[var(--text)]"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => { setIsModalOpen(false); setModalConflict(false); }}
               >
                 <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -959,6 +979,27 @@ export function ParrillaView({ table, title }: { table: string; title: string })
               </button>
             </div>
 
+            {modalConflict && (
+              <div className="mx-6 mt-4 flex items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+                <span>⚠️ Otro usuario modificó este ítem mientras lo editabas.</span>
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    onClick={handleReloadConflictItem}
+                    className="rounded-lg bg-amber-500/20 px-3 py-1 text-xs font-bold hover:bg-amber-500/30"
+                  >
+                    Ver cambios
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalConflict(false)}
+                    className="rounded-lg bg-white/10 px-3 py-1 text-xs font-bold hover:bg-white/15"
+                  >
+                    Ignorar
+                  </button>
+                </div>
+              </div>
+            )}
             <form onSubmit={handleSaveItem}>
               <div className="flex flex-col gap-5 p-6">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
