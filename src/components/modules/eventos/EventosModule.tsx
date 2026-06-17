@@ -227,7 +227,9 @@ export function EventosModule() {
     []
   );
 
-  const [activeSection, setActiveSection] = useState(sections[0].key);
+  const defaultSection =
+    sections.find((s) => s.key === "foro-de-juventudes")?.key ?? sections[0].key;
+  const [activeSection, setActiveSection] = useState(defaultSection);
   const currentSection = sections.find((s) => s.key === activeSection) ?? sections[0];
 
   const [activeSub, setActiveSub] = useState(currentSection.subTabs[0].key);

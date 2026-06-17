@@ -104,7 +104,8 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
     ];
   }, [vertical]);
 
-  const [active, setActive] = useState(tabs[0].key);
+  const defaultKey = tabs.find((t) => t.key === "foro-juventudes")?.key ?? tabs[0].key;
+  const [active, setActive] = useState(defaultKey);
   const current = tabs.find((t) => t.key === active) ?? tabs[0];
 
   return (
