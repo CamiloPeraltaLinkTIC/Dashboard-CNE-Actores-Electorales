@@ -68,7 +68,7 @@ export const VERTICALS: Record<VerticalId, VerticalDef> = {
         path: "/cne/parrilla",
         db: "analytics",
         icon: "LayoutGrid",
-        group: "Electoral",
+        group: "Escucha en vivo",
       },
       {
         slug: "eventos",
@@ -77,7 +77,7 @@ export const VERTICALS: Record<VerticalId, VerticalDef> = {
         path: "/cne/eventos",
         db: "estrategia",
         icon: "CalendarRange",
-        group: "Electoral",
+        group: "Escucha en vivo",
       },
     ],
   },
