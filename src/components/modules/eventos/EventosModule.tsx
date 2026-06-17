@@ -160,7 +160,7 @@ export function EventosModule() {
       },
       {
         key: "moi",
-        label: "MOI",
+        label: "MOI 2.0",
         subTabs: [
           {
             key: "estrategia",
