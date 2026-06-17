@@ -38,9 +38,9 @@ export default function LoginPage() {
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl accent-bg text-2xl font-black text-black neon-glow animate-floaty">
             C
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-[var(--text)]">MARTHA</h1>
+          <h1 className="text-2xl font-black tracking-tight text-[var(--text)]">Centro de Mando Unificado</h1>
           <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[var(--text-faint)]">
-            Centro de Mando · CNE / AE
+            CNE / AE
           </p>
         </div>
 
@@ -85,9 +85,15 @@ export default function LoginPage() {
           <SubmitButton />
         </form>
 
-        <p className="mt-6 text-center text-[10px] text-[var(--text-faint)]">
-          Acceso restringido · Sesión segura
-        </p>
+        {/* by LinkTIC */}
+        <div className="mt-6 flex items-center justify-center gap-1.5">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-faint)]">
+            by
+          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/linktic-logo.svg" alt="LinkTIC" className="h-7 w-auto" />
+          <span className="text-sm font-bold text-[var(--text)]">LinkTIC</span>
+        </div>
       </div>
     </div>
   );
