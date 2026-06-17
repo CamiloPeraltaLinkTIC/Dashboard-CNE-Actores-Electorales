@@ -32,12 +32,12 @@ export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
 
         <div className="hidden items-center gap-2.5 md:flex">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl accent-bg text-black font-black neon-glow">
-            M
+            C
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-black tracking-tight text-[var(--text)]">MARTHA</p>
+            <p className="text-sm font-black tracking-tight text-[var(--text)]">Centro de Mando Unificado</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-faint)]">
-              Centro de Mando
+              CNE / AE
             </p>
           </div>
 
