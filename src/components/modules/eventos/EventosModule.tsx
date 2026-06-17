@@ -159,6 +159,32 @@ export function EventosModule() {
         ],
       },
       {
+        key: "democracia-sin-barreras",
+        label: "Democracia sin barreras",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="democracia-sin-barreras"
+                title="Democracia sin barreras"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="democracia-sin-barreras-listening"
+                title="Análisis de Listening: Democracia sin barreras"
+              />
+            ),
+          },
+        ],
+      },
+      {
         key: "moi",
         label: "MOI 2.0",
         subTabs: [
