@@ -244,29 +244,39 @@ interface ListeningMetrics {
 }
 
 /* ── Chips de importancia ───────────────────────────────────────────── */
-const IMPORTANCE: Record<string, { chip: string }> = {
-  alta:  { chip: "bg-orange-500/10 text-orange-300 border-orange-400/25"  },
-  media: { chip: "bg-amber-500/10 text-amber-300 border-amber-400/25"     },
-  baja:  { chip: "bg-white/6 text-[var(--text-dim)] border-white/12"      },
+const IMPORTANCE: Record<string, { chip: string; label: string; rank: number; badge: string }> = {
+  alta:  { chip: "bg-orange-500/10 text-orange-300 border-orange-400/25", label: "Alto",  rank: 3, badge: "bg-orange-500/20 text-orange-200" },
+  media: { chip: "bg-amber-500/10 text-amber-300 border-amber-400/25",    label: "Medio", rank: 2, badge: "bg-amber-500/20 text-amber-200"   },
+  baja:  { chip: "bg-white/6 text-[var(--text-dim)] border-white/12",     label: "Bajo",  rank: 1, badge: "bg-white/10 text-[var(--text-dim)]" },
 };
 
 /* ── ListCard ─── chips/tags ──────────────────────────────────────────── */
 export function ListCard({ title, items }: { title: string; items: { text: string; importance: string }[] }) {
+  // Ordena de mayor a menor impacto (Alto → Medio → Bajo).
+  const sorted = [...(items || [])].sort(
+    (a, b) =>
+      (IMPORTANCE[b.importance?.toLowerCase()]?.rank ?? 0) -
+      (IMPORTANCE[a.importance?.toLowerCase()]?.rank ?? 0)
+  );
+
   return (
     <div className="glass p-6 flex flex-col min-h-[260px]">
       <h3 className="text-sm font-bold text-[var(--text-dim)] uppercase tracking-wider mb-4">{title}</h3>
-      {!items || items.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-sm text-[var(--text-dim)] italic">No hay datos</div>
       ) : (
         <div className="flex flex-wrap gap-2 content-start">
-          {items.map((item, idx) => {
+          {sorted.map((item, idx) => {
             const style = IMPORTANCE[item.importance?.toLowerCase()] ?? IMPORTANCE.baja;
             return (
               <span
                 key={idx}
-                className={`inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-semibold transition-all hover:scale-105 ${style.chip}`}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition-all hover:scale-105 ${style.chip}`}
               >
                 {item.text}
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${style.badge}`}>
+                  {style.label}
+                </span>
               </span>
             );
           })}
