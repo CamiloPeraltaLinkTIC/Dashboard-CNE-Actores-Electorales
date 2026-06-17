@@ -60,7 +60,7 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
         },
         {
           key: "moi",
-          label: "MOI",
+          label: "MOI 2.0",
           node: (
             <ParrillaView
               table="parrilla_moi_cne"
