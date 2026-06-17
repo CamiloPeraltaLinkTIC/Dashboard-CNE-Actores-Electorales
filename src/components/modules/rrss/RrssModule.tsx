@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { EstrategiaDashboardView } from "./EstrategiaDashboardView";
 import { ListeningDashboardView } from "./ListeningDashboardView";
-import { HootsuiteLiveView } from "./HootsuiteLiveView";
+// import { SocialMetricsView } from "./SocialMetricsView"; // Oculto temporalmente
 import { DbStatus } from "@/components/ui/DbStatus";
 import { TabBar } from "@/components/ui/TabBar";
 import type { VerticalId } from "@/lib/verticals";
@@ -34,11 +34,14 @@ export function RrssModule({ vertical }: { vertical: VerticalId }) {
           label: "Listening",
           node: <ListeningDashboardView categoria="cne_rrss" title="Análisis de Listening · CNE" />,
         },
-        {
-          key: "hootsuite",
-          label: "En vivo (Hootsuite)",
-          node: <HootsuiteLiveView account="cne" />,
-        },
+        // Pestaña de métricas por red oculta temporalmente (a la espera de
+        // credenciales de las APIs nativas). Para reactivarla: descomentar el
+        // import de SocialMetricsView y este bloque.
+        // {
+        //   key: "hootsuite",
+        //   label: "Métricas (redes)",
+        //   node: <SocialMetricsView account="cne" />,
+        // },
       ];
     }
     return [
