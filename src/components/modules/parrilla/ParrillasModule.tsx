@@ -59,6 +59,16 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
           ),
         },
         {
+          key: "democracia-sin-barreras",
+          label: "Democracia sin barreras",
+          node: (
+            <ParrillaView
+              table="parrilla_democracia_sin_barreras_cne"
+              title="Democracia sin barreras · CNE"
+            />
+          ),
+        },
+        {
           key: "moi",
           label: "MOI 2.0",
           node: (

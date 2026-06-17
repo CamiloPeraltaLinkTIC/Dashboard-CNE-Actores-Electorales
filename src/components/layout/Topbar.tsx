@@ -35,7 +35,7 @@ export function Topbar({ onOpenCommand }: { onOpenCommand?: () => void }) {
             C
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-black tracking-tight text-[var(--text)]">Centro de Mando Unificado</p>
+            <p className="text-sm font-black tracking-tight text-[var(--text)]">Centro de Mando Digital</p>
             <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-faint)]">
               CNE / AE
             </p>
