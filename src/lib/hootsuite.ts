@@ -138,6 +138,7 @@ export async function getSocialProfiles(account: string = "cne") {
 export function mapNetworkName(hootsuiteType: string): string {
   const map: Record<string, string> = {
     TWITTER: "X",
+    X: "X",
     FACEBOOKPAGE: "Facebook",
     FACEBOOK: "Facebook",
     INSTAGRAM: "Instagram",
@@ -145,7 +146,9 @@ export function mapNetworkName(hootsuiteType: string): string {
     LINKEDINCOMPANY: "LinkedIn",
     LINKEDIN: "LinkedIn",
     YOUTUBE: "YouTube",
+    YOUTUBECHANNEL: "YouTube",
     TIKTOK: "TikTok",
+    TIKTOKBUSINESS: "TikTok",
   };
   return map[hootsuiteType?.toUpperCase()] || hootsuiteType;
 }
