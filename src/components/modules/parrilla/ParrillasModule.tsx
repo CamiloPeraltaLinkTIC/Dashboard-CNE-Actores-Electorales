@@ -111,6 +111,16 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
           />
         ),
       },
+      {
+        key: "moi",
+        label: "MOI 2.0",
+        node: (
+          <ParrillaView
+            table="parrilla_moi_ae"
+            title="MOI 2.0 · Actores Electorales"
+          />
+        ),
+      },
     ];
   }, [vertical]);
 
