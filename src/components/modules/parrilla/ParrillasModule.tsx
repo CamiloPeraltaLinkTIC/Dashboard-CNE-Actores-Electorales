@@ -114,8 +114,8 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
     ];
   }, [vertical]);
 
-  // Pestaña activa por defecto: Democracia sin barreras (fallback a la primera si no existe, p. ej. AE)
-  const defaultKey = tabs.find((t) => t.key === "democracia-sin-barreras")?.key ?? tabs[0].key;
+  // Pestaña activa por defecto: MOI 2.0 (fallback a la primera si no existe, p. ej. AE)
+  const defaultKey = tabs.find((t) => t.key === "moi")?.key ?? tabs[0].key;
   const [active, setActive] = useState(defaultKey);
   const current = tabs.find((t) => t.key === active) ?? tabs[0];
 
