@@ -1,4 +1,12 @@
-import { VERTICALS, SHARED_MODULES, VERTICAL_IDS, type ModuleDef } from "@/lib/verticals";
+import {
+  VERTICALS,
+  SHARED_MODULES,
+  VERTICAL_IDS,
+  DEFAULT_VERTICAL,
+  rootPath,
+  type ModuleDef,
+  type VerticalId,
+} from "@/lib/verticals";
 
 /**
  * RBAC puro (sin dependencias de servidor): tipos, normalización de rol,
@@ -89,4 +97,30 @@ export function isPathAllowed(access: Pick<UserAccess, "role" | "screens">, path
   const key = screenKeyForPath(path);
   if (!key) return true;
   return access.screens.includes(key);
+}
+
+/**
+ * Ruta de aterrizaje tras el login (`/`). Debe llevar al usuario a un vertical
+ * que realmente pueda ver, no siempre al overview por defecto (CNE).
+ * - superadmin: respeta el vertical preferido (cookie) o el por defecto.
+ * - resto: el primer vertical que contenga alguna de sus pantallas permitidas
+ *   (priorizando el preferido si tiene acceso ahí). Si solo tiene módulos
+ *   transversales, aterriza en la primera pantalla permitida.
+ */
+export function landingPathFor(
+  access: Pick<UserAccess, "role" | "screens">,
+  preferredVertical?: VerticalId | null,
+): string {
+  if (access.role === "superadmin") {
+    return rootPath(preferredVertical ?? DEFAULT_VERTICAL);
+  }
+  const owned = VERTICAL_IDS.filter((v) =>
+    VERTICALS[v].modules.some((m) => access.screens.includes(m.path)),
+  );
+  const pick =
+    preferredVertical && owned.includes(preferredVertical) ? preferredVertical : owned[0];
+  if (pick) return rootPath(pick);
+  // Solo módulos transversales (o ninguno): aterriza en la primera pantalla permitida.
+  if (access.screens.length > 0) return access.screens[0];
+  return rootPath(DEFAULT_VERTICAL);
 }

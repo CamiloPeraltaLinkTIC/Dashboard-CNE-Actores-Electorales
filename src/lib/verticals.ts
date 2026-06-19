@@ -225,7 +225,7 @@ export function modulesFor(id: VerticalId): ModuleDef[] {
  * si no, cae al overview del vertical.
  */
 /** Ruta raíz de un vertical (el overview). Para "campana" la carpeta es /pauta. */
-function rootPath(id: VerticalId): string {
+export function rootPath(id: VerticalId): string {
   if (id === "campana") return "/pauta";
   return `/${id}`;
 }
