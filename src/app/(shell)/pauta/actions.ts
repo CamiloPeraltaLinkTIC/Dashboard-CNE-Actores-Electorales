@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCampanaAdmin } from "@/lib/supabase/campana-admin";
 import { getServerAccess } from "@/lib/auth/access";
 import { canEdit } from "@/lib/auth/rbac";
+import { CONTENT_TRACKING_FIELDS } from "@/lib/campana/types";
 
 export type ActionResult = { ok: true; message: string } | { ok: false; error: string };
 
@@ -208,6 +209,35 @@ export async function saveDailyImpressionsAction(
     return { ok: true, message: `Impresiones guardadas para ${rows.length} días.` };
   } catch {
     return { ok: false, error: "No se pudieron guardar las impresiones. Intenta de nuevo." };
+  }
+}
+
+export async function saveContentTrackingAction(
+  _prev: ActionResult | null,
+  formData: FormData,
+): Promise<ActionResult> {
+  const denied = await ensureEditor();
+  if (denied) return denied;
+  const campaignId = String(formData.get("campaign_id") ?? "");
+  if (!campaignId) return { ok: false, error: "ID de campaña no encontrado." };
+
+  try {
+    const supabase = getCampanaAdmin();
+
+    const row: Record<string, string | number> = { campaign_id: campaignId };
+    for (const f of CONTENT_TRACKING_FIELDS) {
+      row[f] = Math.max(0, Math.round(num(formData, f)));
+    }
+
+    const summaryRes = await supabase
+      .from("content_tracking_summary")
+      .upsert(row, { onConflict: "campaign_id" });
+    if (summaryRes.error) throw summaryRes.error;
+
+    revalidatePath("/pauta", "layout");
+    return { ok: true, message: "Seguimiento de contenidos guardado correctamente." };
+  } catch {
+    return { ok: false, error: "No se pudo guardar el seguimiento. Intenta de nuevo." };
   }
 }
 

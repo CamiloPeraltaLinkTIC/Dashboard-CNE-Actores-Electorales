@@ -158,6 +158,15 @@ export const VERTICALS: Record<VerticalId, VerticalDef> = {
         group: "Análisis",
       },
       {
+        slug: "seguimiento",
+        title: "Seguimiento de Contenidos",
+        description: "Contenidos orgánicos por red social y piezas producidas",
+        path: "/pauta/seguimiento",
+        db: "campana",
+        icon: "ClipboardList",
+        group: "Análisis",
+      },
+      {
         slug: "importar",
         title: "Importar Excel",
         description: "Carga masiva del plan de pauta desde .xlsx",

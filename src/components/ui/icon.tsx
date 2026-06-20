@@ -11,6 +11,7 @@ import {
   Landmark,
   Users,
   LayoutDashboard,
+  ClipboardList,
   type LucideProps,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ const MAP: Record<string, React.ComponentType<LucideProps>> = {
   Landmark,
   Users,
   LayoutDashboard,
+  ClipboardList,
 };
 
 export function Icon({ name, ...props }: { name: string } & LucideProps) {

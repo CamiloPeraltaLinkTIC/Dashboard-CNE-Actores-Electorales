@@ -88,6 +88,34 @@ export interface CampaignData {
   impressions: DailyImpressions[];
 }
 
+/** Campos manuales del resumen de contenidos (las cards de la pantalla). */
+export type MetaField = "total_pautados" | "video" | "carrusel" | "pendiente";
+
+export type AdsField =
+  | "total_campanas"
+  | "campanas_search"
+  | "campanas_display"
+  | "total_anuncios"
+  | "piezas_entregadas"
+  | "pauta_pendiente";
+
+export type ContentTrackingField = MetaField | AdsField;
+
+export const META_FIELDS: MetaField[] = ["total_pautados", "video", "carrusel", "pendiente"];
+
+export const ADS_FIELDS: AdsField[] = [
+  "total_campanas",
+  "campanas_search",
+  "campanas_display",
+  "total_anuncios",
+  "piezas_entregadas",
+  "pauta_pendiente",
+];
+
+export const CONTENT_TRACKING_FIELDS: ContentTrackingField[] = [...META_FIELDS, ...ADS_FIELDS];
+
+export type ContentTrackingData = { campaignId: string } & Record<ContentTrackingField, number>;
+
 export interface ParsedChannel {
   channel: ChannelKey;
   participation_pct: number;
