@@ -52,9 +52,7 @@ export function KPICard({ title, value, change, trend, id, prevText }: KPICardPr
         <p className="text-3xl flex items-baseline gap-2 font-black text-[var(--text)] tracking-tight">
           <AnimatedNumber
             value={value}
-            format={(n) =>
-              `${n.toLocaleString("es-CO", { maximumFractionDigits: 2 })}${/%$/.test(value) ? "%" : ""}`
-            }
+            format={(n) => n.toLocaleString("es-CO", { maximumFractionDigits: 2 })}
           />
         </p>
         {prevText && (

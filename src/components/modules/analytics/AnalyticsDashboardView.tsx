@@ -686,7 +686,9 @@ export function AnalyticsDashboardView() {
     { key: "acquisition", label: "Adquisición", node: <AcquisitionView /> },
     { key: "audience", label: "Audiencia", node: <AudienceView /> },
     { key: "behavior", label: "Comportamiento", node: <BehaviorView /> },
-    { key: "conversions", label: "Conversiones", node: <ConversionsView /> },
+    // Oculta temporalmente: la propiedad de GA4 no devuelve datos de conversión.
+    // Para reactivarla, descomenta esta línea (el endpoint ya está listo).
+    // { key: "conversions", label: "Conversiones", node: <ConversionsView /> },
     { key: "technology", label: "Tecnología", node: <TechnologyView /> },
   ], []);
 
