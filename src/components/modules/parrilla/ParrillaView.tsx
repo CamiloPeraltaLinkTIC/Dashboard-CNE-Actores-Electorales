@@ -338,7 +338,7 @@ export function ParrillaView({ table, title }: { table: string; title: string })
 
       const [h, m] = dragStartTime.split(":").map(Number);
       let totalMinutes = h * 60 + m + deltaMinutes;
-      totalMinutes = Math.max(7 * 60, Math.min(22 * 60 + 59, totalMinutes));
+      totalMinutes = Math.max(6 * 60, Math.min(22 * 60 + 59, totalMinutes));
       totalMinutes = Math.round(totalMinutes / 5) * 5;
 
       const newH = Math.floor(totalMinutes / 60);
