@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
+import { isVerticalId, DEFAULT_VERTICAL } from "@/lib/verticals";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const vertical = cookieStore.get("vertical")?.value === "ae" ? "ae" : "cne";
+  const vCookie = cookieStore.get("vertical")?.value;
+  const vertical = isVerticalId(vCookie) ? vCookie : DEFAULT_VERTICAL;
 
   return (
     <html lang="es" data-vertical={vertical} className={inter.variable} suppressHydrationWarning>
