@@ -7,7 +7,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Custos · Centro de Mando CNE / AE",
+  title: "Centro de Mando Unificado CNE - AE",
   description:
     "Dashboard unificado de inteligencia electoral — CNE y Actores Electorales en un solo centro de mando.",
   icons: {
