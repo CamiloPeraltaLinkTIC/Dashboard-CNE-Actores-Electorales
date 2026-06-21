@@ -212,7 +212,7 @@ export function EventosModule() {
       },
       {
         key: "votaciones-segunda-vuelta",
-        label: "Votaciones Segunda Vuelta",
+        label: "Presidenciales Segunda Vuelta",
         subTabs: [
           {
             key: "estrategia",
@@ -220,7 +220,7 @@ export function EventosModule() {
             node: (
               <EstrategiaDashboardView
                 categoria="votaciones-segunda-vuelta"
-                title="Votaciones Segunda Vuelta"
+                title="Presidenciales Segunda Vuelta"
               />
             ),
           },
@@ -230,7 +230,7 @@ export function EventosModule() {
             node: (
               <ListeningDashboardView
                 categoria="votaciones-segunda-vuelta-listening"
-                title="Análisis de Listening: Votaciones Segunda Vuelta"
+                title="Análisis de Listening: Presidenciales Segunda Vuelta"
               />
             ),
           },
@@ -254,7 +254,9 @@ export function EventosModule() {
   );
 
   const defaultSection =
-    sections.find((s) => s.key === "moi")?.key ?? sections[0].key;
+    sections.find((s) => s.key === "votaciones-segunda-vuelta")?.key ??
+    sections.find((s) => s.key === "moi")?.key ??
+    sections[0].key;
   const [activeSection, setActiveSection] = useState(defaultSection);
   const currentSection = sections.find((s) => s.key === activeSection) ?? sections[0];
 

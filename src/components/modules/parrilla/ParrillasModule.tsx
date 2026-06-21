@@ -80,11 +80,11 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
         },
         {
           key: "votaciones-segunda-vuelta",
-          label: "Votaciones Segunda Vuelta",
+          label: "Presidenciales Segunda Vuelta",
           node: (
             <ParrillaView
               table="parrilla_votaciones_segunda_vuelta_cne"
-              title="Votaciones Segunda Vuelta · CNE"
+              title="Presidenciales Segunda Vuelta · CNE"
             />
           ),
         },
@@ -121,11 +121,25 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
           />
         ),
       },
+      {
+        key: "votaciones-segunda-vuelta",
+        label: "Presidenciales Segunda Vuelta",
+        node: (
+          <ParrillaView
+            table="parrilla_votaciones_segunda_vuelta_ae"
+            title="Presidenciales Segunda Vuelta · Actores Electorales"
+          />
+        ),
+      },
     ];
   }, [vertical]);
 
-  // Pestaña activa por defecto: MOI 2.0 (fallback a la primera si no existe, p. ej. AE)
-  const defaultKey = tabs.find((t) => t.key === "moi")?.key ?? tabs[0].key;
+  // Pestaña activa por defecto: Presidenciales Segunda Vuelta; si no existe en
+  // este vertical (p. ej. AE), cae a MOI 2.0 y luego a la primera.
+  const defaultKey =
+    tabs.find((t) => t.key === "votaciones-segunda-vuelta")?.key ??
+    tabs.find((t) => t.key === "moi")?.key ??
+    tabs[0].key;
   const [active, setActive] = useState(defaultKey);
   const current = tabs.find((t) => t.key === active) ?? tabs[0];
 
