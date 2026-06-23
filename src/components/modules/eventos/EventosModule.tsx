@@ -237,6 +237,32 @@ export function EventosModule() {
         ],
       },
       {
+        key: "rueda-de-prensa",
+        label: "Rueda de Prensa",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="rueda-de-prensa"
+                title="Rueda de Prensa"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="rueda-de-prensa-listening"
+                title="Análisis de Listening: Rueda de Prensa"
+              />
+            ),
+          },
+        ],
+      },
+      {
         key: "eventos",
         label: "Listening General",
         subTabs: [
@@ -254,6 +280,7 @@ export function EventosModule() {
   );
 
   const defaultSection =
+    sections.find((s) => s.key === "rueda-de-prensa")?.key ??
     sections.find((s) => s.key === "votaciones-segunda-vuelta")?.key ??
     sections.find((s) => s.key === "moi")?.key ??
     sections[0].key;
