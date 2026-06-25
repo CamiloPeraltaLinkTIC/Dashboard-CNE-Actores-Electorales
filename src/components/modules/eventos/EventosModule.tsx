@@ -237,6 +237,32 @@ export function EventosModule() {
         ],
       },
       {
+        key: "entrega-credencial-presidencial",
+        label: "Entrega Credencial Presidencial",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="entrega-credencial-presidencial"
+                title="Entrega Credencial Presidencial"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="entrega-credencial-presidencial-listening"
+                title="Análisis de Listening: Entrega Credencial Presidencial"
+              />
+            ),
+          },
+        ],
+      },
+      {
         key: "rueda-de-prensa",
         label: "Rueda de Prensa",
         subTabs: [
