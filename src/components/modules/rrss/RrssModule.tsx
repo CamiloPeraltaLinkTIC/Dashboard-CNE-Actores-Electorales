@@ -34,6 +34,16 @@ export function RrssModule({ vertical }: { vertical: VerticalId }) {
           label: "Listening",
           node: <ListeningDashboardView categoria="cne_rrss" title="Análisis de Listening · CNE" />,
         },
+        {
+          key: "entrega-credencial-presidencial",
+          label: "Entrega Credencial Presidencial",
+          node: (
+            <EstrategiaDashboardView
+              categoria="entrega-credencial-presidencial"
+              title="Entrega Credencial Presidencial · CNE"
+            />
+          ),
+        },
         // Pestaña de métricas por red oculta temporalmente (a la espera de
         // credenciales de las APIs nativas). Para reactivarla: descomentar el
         // import de SocialMetricsView y este bloque.
