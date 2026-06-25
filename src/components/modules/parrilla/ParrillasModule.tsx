@@ -164,16 +164,6 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
             />
           ),
         },
-        {
-          key: "entrega-credencial-presidencial",
-          label: "Entrega Credencial Presidencial",
-          node: (
-            <ParrillaView
-              table="parrilla_entrega_credencial_presidencial_cne"
-              title="Entrega Credencial Presidencial · CNE"
-            />
-          ),
-        },
       ];
     }
     return [
