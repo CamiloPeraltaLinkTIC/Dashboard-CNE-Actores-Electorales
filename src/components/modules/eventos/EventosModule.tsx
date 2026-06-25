@@ -237,32 +237,6 @@ export function EventosModule() {
         ],
       },
       {
-        key: "entrega-credencial-presidencial",
-        label: "Entrega Credencial Presidencial",
-        subTabs: [
-          {
-            key: "estrategia",
-            label: "Estrategia",
-            node: (
-              <EstrategiaDashboardView
-                categoria="entrega-credencial-presidencial"
-                title="Entrega Credencial Presidencial"
-              />
-            ),
-          },
-          {
-            key: "listening",
-            label: "Listening",
-            node: (
-              <ListeningDashboardView
-                categoria="entrega-credencial-presidencial-listening"
-                title="Análisis de Listening: Entrega Credencial Presidencial"
-              />
-            ),
-          },
-        ],
-      },
-      {
         key: "rueda-de-prensa",
         label: "Rueda de Prensa",
         subTabs: [
@@ -289,6 +263,32 @@ export function EventosModule() {
         ],
       },
       {
+        key: "entrega-credencial-presidencial",
+        label: "Entrega Credencial Presidencial",
+        subTabs: [
+          {
+            key: "estrategia",
+            label: "Estrategia",
+            node: (
+              <EstrategiaDashboardView
+                categoria="entrega-credencial-presidencial"
+                title="Entrega Credencial Presidencial"
+              />
+            ),
+          },
+          {
+            key: "listening",
+            label: "Listening",
+            node: (
+              <ListeningDashboardView
+                categoria="entrega-credencial-presidencial-listening"
+                title="Análisis de Listening: Entrega Credencial Presidencial"
+              />
+            ),
+          },
+        ],
+      },
+      {
         key: "eventos",
         label: "Listening General",
         subTabs: [
@@ -306,6 +306,7 @@ export function EventosModule() {
   );
 
   const defaultSection =
+    sections.find((s) => s.key === "entrega-credencial-presidencial")?.key ??
     sections.find((s) => s.key === "rueda-de-prensa")?.key ??
     sections.find((s) => s.key === "votaciones-segunda-vuelta")?.key ??
     sections.find((s) => s.key === "moi")?.key ??
