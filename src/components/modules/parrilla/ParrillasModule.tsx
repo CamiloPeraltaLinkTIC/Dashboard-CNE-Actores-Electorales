@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect, useCallback } from "react";
+import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { ParrillaView } from "./ParrillaView";
 import { ParrillaGenericaView } from "../parrilla-generica/ParrillaGenericaView";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -64,6 +64,7 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
   const isAdmin = userRole === "admin";
 
   const [customTabs, setCustomTabs] = useState<CustomTab[]>([]);
+  const initialTabSet = useRef(false);
   const [showModal, setShowModal] = useState(false);
   const [newTabLabel, setNewTabLabel] = useState("");
   const [copied, setCopied] = useState(false);
@@ -83,7 +84,14 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
       .select("*")
       .eq("vertical", vertical)
       .order("created_at", { ascending: true });
-    if (data) setCustomTabs(data);
+    if (data) {
+      setCustomTabs(data);
+      if (!initialTabSet.current) {
+        initialTabSet.current = true;
+        const entrega = data.find((ct) => ct.key.includes("entrega_credencial"));
+        if (entrega) setActive(entrega.key);
+      }
+    }
   }, [vertical]);
 
   useEffect(() => { loadCustomTabs(); }, [loadCustomTabs]);
@@ -153,6 +161,16 @@ export function ParrillasModule({ vertical }: { vertical: VerticalId }) {
             <ParrillaView
               table="parrilla_votaciones_segunda_vuelta_cne"
               title="Presidenciales Segunda Vuelta · CNE"
+            />
+          ),
+        },
+        {
+          key: "entrega-credencial-presidencial",
+          label: "Entrega Credencial Presidencial",
+          node: (
+            <ParrillaView
+              table="parrilla_entrega_credencial_presidencial_cne"
+              title="Entrega Credencial Presidencial · CNE"
             />
           ),
         },
